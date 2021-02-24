@@ -4,7 +4,7 @@ In addition to the standard way for `kcc` to report warnings on the command line
 
 ## Generating a data set for reporting
 
-Generally speaking, it is most interesting to analyze an error report in aggregate that combines all the static and dynamic errors from building and testing your application. In order to do this, it is necessary first to collect the errors from a run of your build system into a single file. The `-fissue-report` flag to kcc does this. For example, if your C application lives in your home directory in rthe `myapp` folder, and is built using autotools, you can generate such a data set for your application with the following set of commands:
+Generally speaking, it is most interesting to analyze an error report in aggregate that combines all the static and dynamic errors from building and testing your application. In order to do this, it is necessary first to collect the errors from a run of your build system into a single file. The `-fissue-report` flag to `kcc` does this. For example, if your C application lives in your home directory in rthe `myapp` folder, and is built using autotools, you can generate such a data set for your application with the following set of commands:
 
 ```bash
 CC=kcc LD=kcc CFLAGS=-fissue-report=~/myapp/my_errors.json ./configure

@@ -56,7 +56,7 @@ $ curl https://runtimeverification.com/match/match-linux.jar -o match-install.ja
 $ sudo java -jar match-install.jar -console
 ```
 
-Follow the instructions of installer to finish the installation. After that, simply run kcc from that environment to compile programs.
+Follow the instructions of installer to finish the installation. After that, simply run `kcc` from that environment to compile programs.
 
 To upgrade the RV-Match, download and run the installer again.
 
