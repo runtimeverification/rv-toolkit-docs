@@ -1,8 +1,4 @@
-const {
-  cleanUpFiles,
-  generatePagesFromMarkdownFiles,
-  setHTMLBasePath,
-} = require("k-web-theme");
+const { cleanUpFiles, generatePagesFromMarkdownFiles } = require("k-web-theme");
 const path = require("path");
 const fs = require("fs");
 
@@ -21,12 +17,12 @@ generatePagesFromMarkdownFiles({
   outputDirectory: path.resolve(__dirname, "./public_content/"),
   websiteDirectory: path.resolve(__dirname, "./public_content/"),
   template: pageTemplate,
+  includeFileBasePath: path.resolve(__dirname, "./static_content/html"),
 });
 
 pageTemplate = fs
   .readFileSync(path.resolve(__dirname, "../match/html/page_template.html"))
   .toString("utf-8");
-setHTMLBasePath(path.resolve(__dirname, "../match/html/") + "/");
 generatePagesFromMarkdownFiles({
   globPattern: path.resolve(__dirname, "../match") + "/**/*.md",
   globOptions: { ignore: [path.resolve(__dirname, "../web/**/*")] },
@@ -35,4 +31,5 @@ generatePagesFromMarkdownFiles({
   outputDirectory: path.resolve(__dirname, "./public_content/match/"),
   websiteDirectory: path.resolve(__dirname, "./public_content/"),
   template: pageTemplate,
+  includeFileBasePath: path.resolve(__dirname, "../match/html"),
 });
