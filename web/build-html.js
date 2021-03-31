@@ -16,6 +16,7 @@ generatePagesFromMarkdownFiles({
   sourceDirectory: path.resolve(__dirname, "../"),
   outputDirectory: path.resolve(__dirname, "./public_content/"),
   websiteDirectory: path.resolve(__dirname, "./public_content/"),
+  websiteOrigin: "https://runtimeverification.github.io/rv-toolkit-docs",
   template: pageTemplate,
   includeFileBasePath: path.resolve(__dirname, "./static_content/html"),
 });
@@ -30,6 +31,7 @@ generatePagesFromMarkdownFiles({
   sourceDirectory: path.resolve(__dirname, "../match/"),
   outputDirectory: path.resolve(__dirname, "./public_content/match/"),
   websiteDirectory: path.resolve(__dirname, "./public_content/"),
+  websiteOrigin: "https://runtimeverification.github.io/rv-toolkit-docs",
   template: pageTemplate,
   includeFileBasePath: path.resolve(__dirname, "../match/html"),
 });
