@@ -9,4 +9,4 @@ RV-Predict is the only dynamic data race detector that is both sound and maximal
 * [Quickstart](./quickstart.md)
 * [Running Examples](./runningexamples.md)
 * [Trouble Shooting](./troubleshooting.md)
-* [Blog](https://runtimeverification.com/blog/category/rv-predict)
+* [RV-Predict Blog](https://runtimeverification.com/blog/category/rv-predict)

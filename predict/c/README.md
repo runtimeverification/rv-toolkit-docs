@@ -11,4 +11,4 @@ RV-Predict/C is the only dynamic data race detector that is both sound and maxim
 * [Installation](./installation.md)
 * [Quickstart](./quickstart.md)
 * [Running Examples](./runningexamples.md)  
-* [Blog](https://runtimeverification.com/blog/category/rv-predict)
+* [RV-Predict Blog](https://runtimeverification.com/blog/category/rv-predict)
