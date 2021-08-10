@@ -6,7 +6,7 @@ pipeline {
     }
   }
   environment {
-    GITHUB_TOKEN = credentials('rv-jenkins')
+    GITHUB_TOKEN = credentials('rv-jenkins-access-token')
     LONG_REV     = """${sh(returnStdout: true, script: 'git rev-parse HEAD').trim()}"""
   }
   options { ansiColor('xterm') }
@@ -21,7 +21,7 @@ pipeline {
         beforeAgent true
       }
       steps {
-        sshagent(['2b3d8d6b-0855-4b59-864a-6b3ddf9c9d1a']) {
+        sshagent(['rv-jenkins-github']) {
           sh '''
             git clone 'ssh://github.com/runtimeverification/rv-toolkit-docs.git'
             cd rv-toolkit-docs
