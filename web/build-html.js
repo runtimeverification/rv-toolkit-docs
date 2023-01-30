@@ -2,8 +2,6 @@ const { cleanUpFiles, generatePagesFromMarkdownFiles } = require("k-web-theme");
 const path = require("path");
 const fs = require("fs");
 
-cleanUpFiles(path.resolve(__dirname, "./public_content/"));
-
 let pageTemplate = fs
   .readFileSync(
     path.resolve(__dirname, "./static_content/html/page_template.html")
