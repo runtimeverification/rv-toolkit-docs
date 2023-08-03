@@ -1,7 +1,6 @@
 name: Build and Deploy
 on: push
 
-permissions: write-all
 jobs:
   build-and-deploy:
     concurrency:
