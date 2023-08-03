@@ -1,10 +1,6 @@
 name: Build and Deploy
-on:
-  issues:
-    types: [ push ]
-  push:
-    branches:
-      - master
+on: push
+
 permissions: write-all
 jobs:
   build-and-deploy:
