@@ -3,9 +3,6 @@ on: push
 
 jobs:
   build-and-deploy:
-    concurrency:
-      group: ci-${{ github.ref }} # Recommended if you intend to make multiple deployments in quick succession.
-      cancel-in-progress: true # Stop anything already running and run with latest code for current branch
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
