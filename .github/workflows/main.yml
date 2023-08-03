@@ -30,6 +30,6 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4.3.3
         with:
           branch: gh-pages # The branch the action should deploy to.
-          folder: public_content # The folder the action should deploy.
+          folder: web/public_content # The folder the action should deploy.
           clean: true
           single-commit: true
