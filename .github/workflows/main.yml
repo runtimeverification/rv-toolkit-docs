@@ -1,0 +1,34 @@
+name: Build and Deploy
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+        with:
+          ref: master
+      - name: Checkout submodules
+        run: git submodule update --init --recursive
+      - name: Install nodejs 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Build 🔧 # This example project is built using npm and outputs the result to the 'build' folder. Replace with the commands required to build your project, or remove this step entirely if your site is pre-built.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd web
+          npm install
+          npm run build
+          npm run build-sitemap
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4.3.3
+        with:
+          branch: gh-pages # The branch the action should deploy to.
+          folder: web/public_content # The folder the action should deploy.
+          clean: true
+          single-commit: true
