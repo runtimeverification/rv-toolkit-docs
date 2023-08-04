@@ -24,7 +24,6 @@ jobs:
           cd web
           npm install
           npm run build
-          npm run build-book
           npm run build-sitemap
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.3.3
