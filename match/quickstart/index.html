@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+<meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+/>
+<meta
+  name="description"
+  content="Design and implement your programming language and software analysis tools with mathematical rigor."
+/>
+<meta name="keywords" content="runtime, verification, rv, k" />
+<meta name="author" content="RV-Toolkit | Runtime Verification Inc" />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://runtimeverification.github.io/rv-toolkit-docs/match/quickstart/" />
+
+<!--favicon icon-->
+<link rel="icon" type="image/png" href="../../assets/img/favicon.ico" />
+
+<title>RV-Toolkit | Runtime Verification Inc</title>
+
+<!-- <base href="/k/" /> -->
+
+<!--web fonts-->
+<link
+  href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,800"
+  rel="stylesheet"
+/>
+<link
+  href="https://fonts.googleapis.com/css?family=Lora:400i"
+  rel="stylesheet"
+/>
+
+<link
+  href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css"
+  rel="stylesheet"
+/>
+
+<link href="../../assets/css/index.css" rel="stylesheet" />
+
+<!--[if (gt IE 9) |!(IE)]><!-->
+<!--<link rel="stylesheet" href="/assets/vendor/custom-nav/css/effects/fade-menu.css"/>-->
+<!-- <link rel="stylesheet" href="../../assets/k/vl-nav/css/effects/slide-menu.css" /> -->
+<!--<![endif]-->
+
+  </head>
+
+  <body>
+<header
+  class="navbar navbar-expand navbar-dark flex-column flex-md-row bd-navbar"
+>
+  <a class="logo-link" href="../../index.html"> RV-Toolkit </a>
+  <ul class="navbar-nav ml-md-auto">
+    <li class="nav-item">
+      <a
+        class="nav-link pl-2 pr-1 mx-1 py-3 my-n2"
+        href="https://github.com/runtimeverification/rv-toolkit-docs"
+        target="_blank"
+        rel="noopener"
+        aria-label="GitHub"
+      >
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  </ul>
+  <!--
+  <a
+    class="btn btn-rv-blue d-none d-lg-inline-block mb-3 mb-md-0 ml-md-3"
+    href="../../downloads"
+    >Download</a
+  >
+  -->
+</header>
+
+
+    <div class="container-fluid">
+      <div class="row flex-xl-nowrap">
+<div class="col-12 col-md-3 col-xl-2 bd-sidebar mb-3">
+    <form
+      role="search"
+      class="bd-search d-flex align-items-center justify-content-between"
+    >
+      <input
+        type="search"
+        class="form-control"
+        placeholder="Search..."
+        aria-label="Search for..."
+        autocomplete="false"
+        id="search-box"
+      />
+      <button
+        class="btn bd-search-docs-toggle d-md-none p-0 ml-3 collapsed"
+        type="button"
+        aria-label="Toggle docs navigation"
+        style="font-size: 1.4rem"
+      >
+        <i class="fas fa-bars"></i>
+      </button>
+    </form>
+    <nav class="collapse bd-links" aria-label="Main navigation">
+      <div class="bd-toc-item">
+        <a class="bd-toc-link" href="../../match/">Welcome!</a>
+        <a class="bd-toc-link" href="../../match/installing/">Installing</a>
+        <a class="bd-toc-link" href="../../match/quickstart/">Quickstart</a>
+        <a class="bd-toc-link" href="../../match/vagrant/"
+          >Running Vagrant VM</a
+        >
+        <a class="bd-toc-link" href="../../match/runningexamples/"
+          >Running Examples</a
+        >
+        <a class="bd-toc-link" href="../../match/benchmark/"
+          >Toyota ITC Benchmark</a
+        >
+        <a class="bd-toc-link" href="../../match/eclipse/"
+          >Eclipse Integration</a
+        >
+        <a class="bd-toc-link" href="../../match/reporting/"
+          >Creating Error Reports</a
+        >
+        <a class="bd-toc-link" href="../../match/troubleshooting/"
+          >Problems running RV-Match?</a
+        >
+        <a
+          class="bd-toc-link"
+          href="https://runtimeverification.com/blog/category/rv-match/"
+          target="_blank"
+          >RV-Match Blog</a
+        >
+      </div>
+    </nav>
+  </div>
+  
+        <main
+          class="col-12 col-md-6 col-xl-8 py-md-3 pl-md-5 bd-content"
+          role="main"
+        >
+          <div class="introduction markdown-preview"><html><head></head><body><h1 id="quickstart">Quickstart</h1>
+<p>RV-Match currently consists of only one tool, <code>kcc</code>, which is designed as a drop-off replacement for the <code>gcc</code> C compiler. After installation (see <a href="../installing/">Installing</a> for help), simply open a terminal (on Windows 10, open the Ubuntu bash of Windows Subsystem for Linux) and then use <code>kcc</code> to compile programs the same way you use <code>gcc</code>, for example:</p>
+<pre><code class="language-bash">kcc file.c
+./a.out
+</code></pre>
+<p>Since <code>kcc</code> is implemented in Java, the first time you invoke it may take significantly longer than subsequent invocations, due to JVM warmup costs. So please be patient the first time you invoke <code>kcc</code>, as it may even take 30 seconds or longer, depending on your machine, no matter how small your program is. The second invocation of <code>kcc</code> will be much faster (about one order of magnitude faster).</p>
+<p><code>kcc --help</code> will provide usage information, but in general, options should be roughly the same as <code>gcc</code>‘s. There are a few options specific to <code>kcc</code>, though, including the following:</p>
+<ul>
+<li>The <code>-profile</code> option allows you to switch to a profile of your choice. A profile is referred to by a unique name, and consists of an instance of C11 to a particular architecture, operating system, compiler and library implementation. To see the current profile as well as all the available profiles that you can choose from, type <code>kcc -v</code>.</li>
+<li>The <code>-fissue-report=&lt;file&gt;</code> option tells <code>kcc</code> to write its issues to <code>&lt;file&gt;</code> instead of the standard output. The format for the file (CSV/JSON) is inferred from the specified file extension. If <code>&lt;file&gt;</code> is given with a relative path, then <code>kcc</code> generates the report (containing compilation issues) relative to the working directory of <code>kcc</code>, and the generated executable, if any, will generate a report (containing runtime issues) relative to the working directory the executable is run from. So the two reports will be in the same file given with a relative path only if you run both <code>kcc</code> and the generated executable from the same directory. You can also pass <code>&lt;file&gt;</code> with an absolute path, in which case all error reports are put in the same file: this is especially useful when using <code>kcc</code> with a large multi-directory project. You can also set the RV_ISSUE_REPORT environment variable, which will provide the same functionality. In cases of conflict, the value of the environment variable overrides the value of the compiler flag.</li>
+<li>The <code>-Wlint</code> (or <code>-flint</code>) option tells <code>kcc</code> to report not only errors, but also warnings. The difference between errors and warnings is that the former violate the ISO C11 standard, so they must be fixed in order for your program to be standards-compliant, while the latter may be indicative of potential defects even though they can also occur in strictly-conforming C11 programs. One such warning is the dynamic memory overflow; use the flag <code>-fheap-size</code> to assign a maximum memory size (beyond which heap-allocation functions like malloc will report a warning and return a null pointer). See <a href="../runningexamples/"><em>Running Examples</em></a> for details and examples.</li>
+<li>The <code>-frecover-all-errors</code> option tells <code>kcc</code> that we wish to recover from errors that would otherwise be considered fatal errors. This includes undefined behavior that can crash the program, such as a null pointer dereferencing, as well as certain constraint violations that would normally be considered cause for a standards-compliant compiler (e.g. <code>gcc -pedantic-errors</code>) to reject the program. Note that this option has an adverse effect on the return code of <code>kcc</code>, causing it to return status code 0 on the command line even in cases that would otherwise be considered fatal compiler errors for <code>kcc</code>. As such, it is strongly recommended that this option not be passed to a configure script but instead be placed directly in the Makefile after configure has run, otherwise, the project you are compiling might not compile correctly.</li>
+</ul>
+</body></html></div>
+        </main>
+
+        <!-- Page ToC -->
+        <div class="col-12 col-md-3 col-xl-2 py-md-3 bd-sidebar page-toc mb-3">
+          
+<div>
+<div class="bd-toc-link-wrapper" style="padding:0.25rem 0;">
+              <a
+                href="#quickstart"
+                class="bd-toc-link"
+                style="padding-left: 0px;;"
+              >
+                Quickstart
+              </a></div>
+</div>
+
+        </div>
+        <div class="btn btn-rv-blue page-toc-toggle-btn"></div>
+        <!-- End Page ToC -->
+      </div>
+    </div>
+<!-- The footer is now controlled by the k-web-theme git submodule -->
+<footer id="rvsite-footer" class="app-footer text-md-left text-center">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-4 mb-md-0 mb-4">
+        <a href="https://runtimeverification.com/" target="_blank">
+          <picture>
+            <source
+              srcset="
+                https://runtimeverification.com/assets/img/rv-logo-dark.png
+              "
+              media="(prefers-color-scheme: dark)"
+            />
+            <img
+              class="logo-dark"
+              src="https://runtimeverification.com/assets/img/rv-logo.png"
+              alt="Runtime Verification logo"
+              style="height: 32px"
+            /> </picture
+        ></a>
+        <p class="mt-2 text-md-left copyright">
+          <a href="https://maps.app.goo.gl/8YhKozfmZtgzQBsH7" target="_blank"
+            >202 S Broadway Ave #31, Urbana, IL</a
+          >
+        </p>
+      </div>
+      <div class="col-md-4 text-md-center mb-md-0 mb-4"></div>
+      <div class="col-md-4 mb-md-0 mb-4 pl-0 text-md-right">
+        <p class="copyright">2024 © all rights reserved</p>
+        <span class="copyright"
+          ><a href="https://runtimeverification.com/privacy-policy"
+            >privacy policy</a
+          >
+          |
+          <a href="https://runtimeverification.com/terms-of-use"
+            >terms of use</a
+          ></span
+        >
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Typist/1.2/typist.min.js"></script>
+    <script src="../../assets/js/index.js"></script>
+  </body>
+</html>

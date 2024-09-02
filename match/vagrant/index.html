@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+<meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+/>
+<meta
+  name="description"
+  content="Design and implement your programming language and software analysis tools with mathematical rigor."
+/>
+<meta name="keywords" content="runtime, verification, rv, k" />
+<meta name="author" content="RV-Toolkit | Runtime Verification Inc" />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://runtimeverification.github.io/rv-toolkit-docs/match/vagrant/" />
+
+<!--favicon icon-->
+<link rel="icon" type="image/png" href="../../assets/img/favicon.ico" />
+
+<title>RV-Toolkit | Runtime Verification Inc</title>
+
+<!-- <base href="/k/" /> -->
+
+<!--web fonts-->
+<link
+  href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,800"
+  rel="stylesheet"
+/>
+<link
+  href="https://fonts.googleapis.com/css?family=Lora:400i"
+  rel="stylesheet"
+/>
+
+<link
+  href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css"
+  rel="stylesheet"
+/>
+
+<link href="../../assets/css/index.css" rel="stylesheet" />
+
+<!--[if (gt IE 9) |!(IE)]><!-->
+<!--<link rel="stylesheet" href="/assets/vendor/custom-nav/css/effects/fade-menu.css"/>-->
+<!-- <link rel="stylesheet" href="../../assets/k/vl-nav/css/effects/slide-menu.css" /> -->
+<!--<![endif]-->
+
+  </head>
+
+  <body>
+<header
+  class="navbar navbar-expand navbar-dark flex-column flex-md-row bd-navbar"
+>
+  <a class="logo-link" href="../../index.html"> RV-Toolkit </a>
+  <ul class="navbar-nav ml-md-auto">
+    <li class="nav-item">
+      <a
+        class="nav-link pl-2 pr-1 mx-1 py-3 my-n2"
+        href="https://github.com/runtimeverification/rv-toolkit-docs"
+        target="_blank"
+        rel="noopener"
+        aria-label="GitHub"
+      >
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  </ul>
+  <!--
+  <a
+    class="btn btn-rv-blue d-none d-lg-inline-block mb-3 mb-md-0 ml-md-3"
+    href="../../downloads"
+    >Download</a
+  >
+  -->
+</header>
+
+
+    <div class="container-fluid">
+      <div class="row flex-xl-nowrap">
+<div class="col-12 col-md-3 col-xl-2 bd-sidebar mb-3">
+    <form
+      role="search"
+      class="bd-search d-flex align-items-center justify-content-between"
+    >
+      <input
+        type="search"
+        class="form-control"
+        placeholder="Search..."
+        aria-label="Search for..."
+        autocomplete="false"
+        id="search-box"
+      />
+      <button
+        class="btn bd-search-docs-toggle d-md-none p-0 ml-3 collapsed"
+        type="button"
+        aria-label="Toggle docs navigation"
+        style="font-size: 1.4rem"
+      >
+        <i class="fas fa-bars"></i>
+      </button>
+    </form>
+    <nav class="collapse bd-links" aria-label="Main navigation">
+      <div class="bd-toc-item">
+        <a class="bd-toc-link" href="../../match/">Welcome!</a>
+        <a class="bd-toc-link" href="../../match/installing/">Installing</a>
+        <a class="bd-toc-link" href="../../match/quickstart/">Quickstart</a>
+        <a class="bd-toc-link" href="../../match/vagrant/"
+          >Running Vagrant VM</a
+        >
+        <a class="bd-toc-link" href="../../match/runningexamples/"
+          >Running Examples</a
+        >
+        <a class="bd-toc-link" href="../../match/benchmark/"
+          >Toyota ITC Benchmark</a
+        >
+        <a class="bd-toc-link" href="../../match/eclipse/"
+          >Eclipse Integration</a
+        >
+        <a class="bd-toc-link" href="../../match/reporting/"
+          >Creating Error Reports</a
+        >
+        <a class="bd-toc-link" href="../../match/troubleshooting/"
+          >Problems running RV-Match?</a
+        >
+        <a
+          class="bd-toc-link"
+          href="https://runtimeverification.com/blog/category/rv-match/"
+          target="_blank"
+          >RV-Match Blog</a
+        >
+      </div>
+    </nav>
+  </div>
+  
+        <main
+          class="col-12 col-md-6 col-xl-8 py-md-3 pl-md-5 bd-content"
+          role="main"
+        >
+          <div class="introduction markdown-preview"><html><head></head><body><h1 id="running-vagrant-vm">Running Vagrant VM</h1>
+<p>The Vagrant VM distribution of RV-Match is the preferred method for running RV-Match on Windows and Mac OS X. It contains a Linux virtual machine with the Linux version of RV-Match, with full library support.</p>
+<h2 id="setting-up-vagrant-vm">Setting up Vagrant VM</h2>
+<p>Before you setup Vagrant VM, you need to install VirtualBox, Git, and Vagrant:</p>
+<ol>
+<li>Download and install <a href="https://www.virtualbox.org/wiki/Downloads" target="_blank" rel="noreferrer noopener">Virtualbox</a>.</li>
+<li>If you are on Windows, download and install <a href="https://git-scm.com/download/win" target="_blank" rel="noreferrer noopener">Git for Windows</a>. You must select the “use Git and optional Unix tools from the Windows Command Line” option during installation. Restart any command prompt windows and make sure running <code>ssh</code> works and prints usage information.</li>
+<li>Download and install <a href="http://www.vagrantup.com/" target="_blank" rel="noreferrer noopener">Vagrant</a>. If you use a package manager, make sure your version is at least 1.5.2 (or install from the website).</li>
+</ol>
+<p>To setup Vagrant VM, please follow the following steps:</p>
+<p>First, open <code>terminal</code> (on Windows, open <code>Git Bash</code> program), then run the following commands:</p>
+<pre><code class="language-bash">$ <span class="token function">mkdir</span> rv-match-vagrant           <span class="token comment"># Make a directory named as rv-match-vagrant</span>
+                                   <span class="token comment"># You can give it another name if you like.</span>
+$ <span class="token builtin class-name">cd</span> rv-match-vagrant              <span class="token comment"># Go to that directory</span>
+$ vagrant init                     <span class="token comment"># Init Vagrant project</span>
+$ vagrant box <span class="token function">add</span> ubuntu/xenial64  <span class="token comment"># Install Ubuntu 16.04 box</span>
+</code></pre>
+<p>This will place a <code>Vagrantfile</code> in your current directory.</p>
+<p>Next, open the <code>Vagrantfile</code> generated from the previous step with your favorite editor, change the line <code>config.vm.box = "base"</code> to <code>config.vm.box = "ubuntu/xenial64"</code>. Then run the following commands:</p>
+<pre><code class="language-bash">$ vagrant up                       <span class="token comment"># Create Vagrant VM</span>
+$ vagrant <span class="token function">ssh</span>                      <span class="token comment"># SSH to Vagrant VM</span>
+                                   <span class="token comment"># You can then run commands in Vagrant VM</span>
+</code></pre>
+<p>You can then run <code>vagrant ssh</code> in that directory any time to connect to the Vagrant VM.</p>
+<p>To destroy the Vagrant VM, simply run <code>vagrant destroy</code> in that directory.</p>
+<p>For more information on advanced Vagrant options and configuration, <a href="https://docs.vagrantup.com/" target="_blank" rel="noreferrer noopener">see here</a>.</p>
+<blockquote>
+<p>Note</p>
+<p>If Vagrant gives a host error in Virtualbox, make sure hardware virtualization is <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/5/html/Virtualization/sect-Virtualization-Troubleshooting-Enabling_Intel_VT_and_AMD_V_virtualization_hardware_extensions_in_BIOS.html" target="_blank" rel="noreferrer noopener">enabled in the BIOS</a>, and that Virtualbox is able to start a machine with 4 cores. If this doesn’t work, please <a href="https://runtimeverification.com/contact" target="_blank" rel="noreferrer noopener">contact our support</a>.</p>
+</blockquote>
+<h2 id="installing-rv-match-in-vagrant-vm">Installing RV-Match in Vagrant VM</h2>
+<p>First, run <code>vagrant ssh</code> in <code>rv-match-vagrant</code> directory that you created in previous section to connect to our Vagrant VM. Then run the following commands to install <code>RV-Match</code>:</p>
+<pre><code class="language-bash"><span class="token comment"># Install Java 8:</span>
+$ <span class="token function">sudo</span> <span class="token function">apt-get</span> update
+$ <span class="token function">sudo</span> <span class="token function">apt-get</span> <span class="token function">install</span> openjdk-8-jdk <span class="token parameter variable">-y</span>
+
+<span class="token comment"># Download and run the RV-Match installer</span>
+$ <span class="token function">curl</span> https://runtimeverification.com/match/match-linux.jar <span class="token parameter variable">-o</span> match-install.jar
+$ <span class="token function">sudo</span> <span class="token function">java</span> <span class="token parameter variable">-jar</span> match-install.jar <span class="token parameter variable">-console</span>
+</code></pre>
+<p>Follow the instructions of installer to finish the installation. After that, simply run <code>kcc</code> from that environment to compile programs.</p>
+<p>To upgrade the RV-Match, download and run the installer again.</p>
+<p>Please see <code>/opt/rv-match/README.md</code> for more information on using RV-Match.</p>
+<p>If you have any issues with RV-Match licensing in your corporate environment, please <a href="https://runtimeverification.com/contact" target="_blank" rel="noreferrer noopener">contact support</a> for troubleshooting or instructions on installing offline.</p>
+</body></html></div>
+        </main>
+
+        <!-- Page ToC -->
+        <div class="col-12 col-md-3 col-xl-2 py-md-3 bd-sidebar page-toc mb-3">
+          
+<div>
+<details style="padding:0.25rem 0;;padding-left: 0px;">
+            <summary class="bd-toc-link-wrapper">
+              <a href="#running-vagrant-vm" class="bd-toc-link">Running Vagrant VM</a>
+              </summary>
+            <div>
+              <div class="bd-toc-link-wrapper" style="padding:0.25rem 0;">
+              <a
+                href="#setting-up-vagrant-vm"
+                class="bd-toc-link"
+                style="padding-left: 8px;;"
+              >
+                Setting up Vagrant VM
+              </a></div><div class="bd-toc-link-wrapper" style="padding:0.25rem 0;">
+              <a
+                href="#installing-rv-match-in-vagrant-vm"
+                class="bd-toc-link"
+                style="padding-left: 8px;;"
+              >
+                Installing RV-Match in Vagrant VM
+              </a></div>
+            </div>
+          </details>
+        
+</div>
+
+        </div>
+        <div class="btn btn-rv-blue page-toc-toggle-btn"></div>
+        <!-- End Page ToC -->
+      </div>
+    </div>
+<!-- The footer is now controlled by the k-web-theme git submodule -->
+<footer id="rvsite-footer" class="app-footer text-md-left text-center">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-4 mb-md-0 mb-4">
+        <a href="https://runtimeverification.com/" target="_blank">
+          <picture>
+            <source
+              srcset="
+                https://runtimeverification.com/assets/img/rv-logo-dark.png
+              "
+              media="(prefers-color-scheme: dark)"
+            />
+            <img
+              class="logo-dark"
+              src="https://runtimeverification.com/assets/img/rv-logo.png"
+              alt="Runtime Verification logo"
+              style="height: 32px"
+            /> </picture
+        ></a>
+        <p class="mt-2 text-md-left copyright">
+          <a href="https://maps.app.goo.gl/8YhKozfmZtgzQBsH7" target="_blank"
+            >202 S Broadway Ave #31, Urbana, IL</a
+          >
+        </p>
+      </div>
+      <div class="col-md-4 text-md-center mb-md-0 mb-4"></div>
+      <div class="col-md-4 mb-md-0 mb-4 pl-0 text-md-right">
+        <p class="copyright">2024 © all rights reserved</p>
+        <span class="copyright"
+          ><a href="https://runtimeverification.com/privacy-policy"
+            >privacy policy</a
+          >
+          |
+          <a href="https://runtimeverification.com/terms-of-use"
+            >terms of use</a
+          ></span
+        >
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Typist/1.2/typist.min.js"></script>
+    <script src="../../assets/js/index.js"></script>
+  </body>
+</html>

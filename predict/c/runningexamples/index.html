@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+<meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+/>
+<meta
+  name="description"
+  content="Design and implement your programming language and software analysis tools with mathematical rigor."
+/>
+<meta name="keywords" content="runtime, verification, rv, k" />
+<meta name="author" content="RV-Toolkit | Runtime Verification Inc" />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://runtimeverification.github.io/rv-toolkit-docs/predict/c/runningexamples/" />
+
+<!--favicon icon-->
+<link rel="icon" type="image/png" href="../../../assets/img/favicon.ico" />
+
+<title>RV-Toolkit | Runtime Verification Inc</title>
+
+<!-- <base href="/k/" /> -->
+
+<!--web fonts-->
+<link
+  href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,800"
+  rel="stylesheet"
+/>
+<link
+  href="https://fonts.googleapis.com/css?family=Lora:400i"
+  rel="stylesheet"
+/>
+
+<link
+  href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css"
+  rel="stylesheet"
+/>
+
+<link href="../../../assets/css/index.css" rel="stylesheet" />
+
+<!--[if (gt IE 9) |!(IE)]><!-->
+<!--<link rel="stylesheet" href="/assets/vendor/custom-nav/css/effects/fade-menu.css"/>-->
+<!-- <link rel="stylesheet" href="../../../assets/k/vl-nav/css/effects/slide-menu.css" /> -->
+<!--<![endif]-->
+
+  </head>
+
+  <body>
+<header
+  class="navbar navbar-expand navbar-dark flex-column flex-md-row bd-navbar"
+>
+  <a class="logo-link" href="../../../index.html"> RV-Toolkit </a>
+  <ul class="navbar-nav ml-md-auto">
+    <li class="nav-item">
+      <a
+        class="nav-link pl-2 pr-1 mx-1 py-3 my-n2"
+        href="https://github.com/runtimeverification/rv-toolkit-docs"
+        target="_blank"
+        rel="noopener"
+        aria-label="GitHub"
+      >
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  </ul>
+  <!--
+  <a
+    class="btn btn-rv-blue d-none d-lg-inline-block mb-3 mb-md-0 ml-md-3"
+    href="../../../downloads"
+    >Download</a
+  >
+  -->
+</header>
+
+
+    <div class="container-fluid">
+      <div class="row flex-xl-nowrap">
+<div class="col-12 col-md-3 col-xl-2 bd-sidebar mb-3">
+  <form
+    role="search"
+    class="bd-search d-flex align-items-center justify-content-between"
+  >
+    <input
+      type="search"
+      class="form-control"
+      placeholder="Search..."
+      aria-label="Search for..."
+      autocomplete="false"
+      id="search-box"
+    />
+    <button
+      class="btn bd-search-docs-toggle d-md-none p-0 ml-3 collapsed"
+      type="button"
+      aria-label="Toggle docs navigation"
+      style="font-size: 1.4rem"
+    >
+      <i class="fas fa-bars"></i>
+    </button>
+  </form>
+  <nav class="collapse bd-links" aria-label="Main navigation">
+    <div class="bd-toc-item">
+      <a class="bd-toc-link" href="../../../predict/c/">Welcome!</a>
+      <a class="bd-toc-link" href="../../../predict/c/installation/"
+        >Installation</a
+      >
+      <a class="bd-toc-link" href="../../../predict/c/quickstart/"
+        >Quickstart</a
+      >
+      <a class="bd-toc-link" href="../../../predict/c/runningexamples/"
+        >Running Examples</a
+      >
+      <a
+        class="bd-toc-link"
+        href="https://runtimeverification.com/blog/category/rv-predict/"
+        target="_blank"
+        >RV-Predict Blog</a
+      >
+    </div>
+  </nav>
+</div>
+
+        <main
+          class="col-12 col-md-6 col-xl-8 py-md-3 pl-md-5 bd-content"
+          role="main"
+        >
+          <div class="introduction markdown-preview"><html><head></head><body><h1 id="running-the-examples">Running the examples</h1>
+<p>We provide examples demonstrating RV-Predict capabilities in detecting concurrency bugs. Below we focus on detecting data races. Data races are a common kind of concurrency bug in multithreaded applications. A data race occurs when two threads concurrently access a shared memory and at least one of the accesses is a write. Data races are very hard to detect with traditional testing techniques. It requires occurrence of simultaneous access from multiple threads to a particular region which results in corrupted data that violates a particular user-provided assertion or test case. Traditional software engineering testing methods are inadequate, because all tests passing most of the time with only rare, mysterious failures might create a false sense of reliability.</p>
+<p>Despite all the effort spent on solving this problem, it remains a challenge in practice to detect data races effectively and efficiently. RV-Predict aims to change this undesirable situation. Below we summarize some of the most common data races in C and C++, showing how to detect them with RV-Predict. The examples described below can be found in the directory <code>/usr/share/examples/rv-predict-c</code>.</p>
+<h2 id="1.-concurrent-access-to-a-shared-variable">1. Concurrent Access to a Shared Variable</h2>
+<p>This is the simplest form of a data race, and also the most frequent in practice. The problem description is straightforward: multiple threads are accessing a shared variable without any synchronization.</p>
+<h3 id="posix-threads">POSIX Threads</h3>
+<p>Consider the following snippet of the code from <code>dot-product.c</code> that uses the POSIX Threads library for multithreading.</p>
+<pre><code class="language-c"><span class="token number">37</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token operator">*</span>
+<span class="token number">38</span> <span class="token function">dotprod</span><span class="token punctuation">(</span><span class="token keyword">void</span> <span class="token operator">*</span>arg<span class="token punctuation">)</span>
+<span class="token number">39</span> <span class="token punctuation">{</span>
+<span class="token number">40</span>         <span class="token comment">/* Define and use local variables for convenience */</span>
+<span class="token number">41</span> 
+<span class="token number">42</span>         <span class="token keyword">int</span> i<span class="token punctuation">,</span> start<span class="token punctuation">,</span> end<span class="token punctuation">,</span> len<span class="token punctuation">;</span>
+<span class="token number">43</span>         <span class="token keyword">long</span> offset<span class="token punctuation">;</span>
+<span class="token number">44</span>         <span class="token keyword">float</span> mysum<span class="token punctuation">,</span> <span class="token operator">*</span>x<span class="token punctuation">,</span> <span class="token operator">*</span>y<span class="token punctuation">;</span>
+<span class="token number">45</span>         offset <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">long</span><span class="token punctuation">)</span>arg<span class="token punctuation">;</span>
+<span class="token number">46</span> 
+<span class="token number">47</span>         len <span class="token operator">=</span> dotstr<span class="token punctuation">.</span>veclen<span class="token punctuation">;</span>
+<span class="token number">48</span>         start <span class="token operator">=</span> offset <span class="token operator">*</span> len<span class="token punctuation">;</span>
+<span class="token number">49</span>         end   <span class="token operator">=</span> start <span class="token operator">+</span> len<span class="token punctuation">;</span>
+<span class="token number">50</span>         x <span class="token operator">=</span> dotstr<span class="token punctuation">.</span>a<span class="token punctuation">;</span>
+<span class="token number">51</span>         y <span class="token operator">=</span> dotstr<span class="token punctuation">.</span>b<span class="token punctuation">;</span>
+<span class="token number">52</span> 
+<span class="token number">53</span>         <span class="token comment">/*
+54          * Perform the dot product and assign result
+55          * to the appropriate variable in the structure.
+56          */</span>
+<span class="token number">57</span> 
+<span class="token number">58</span>         mysum <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token number">59</span>         <span class="token keyword">for</span> <span class="token punctuation">(</span>i <span class="token operator">=</span> start<span class="token punctuation">;</span> i <span class="token operator">&lt;</span> end<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span>
+<span class="token number">60</span>         mysum <span class="token operator">+=</span> x<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">*</span> y<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token number">61</span> 
+<span class="token number">62</span>         dotstr<span class="token punctuation">.</span>sum <span class="token operator">+=</span> mysum<span class="token punctuation">;</span>
+<span class="token number">63</span>         <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"Thread %ld did %2d to %2d:  mysum=%f global sum=%f\n"</span><span class="token punctuation">,</span>
+<span class="token number">64</span>         offset<span class="token punctuation">,</span> start<span class="token punctuation">,</span> end<span class="token punctuation">,</span> mysum<span class="token punctuation">,</span> dotstr<span class="token punctuation">.</span>sum<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token number">65</span> 
+<span class="token number">66</span>         <span class="token keyword">return</span> <span class="token constant">NULL</span><span class="token punctuation">;</span>
+<span class="token number">67</span> <span class="token punctuation">}</span>
+</code></pre>
+<p>The function <code>dotprod</code> is activated when the thread is created. All input to this routine is obtained from a structure of type <code>DOTDATA</code> and all output from this function is written into this structure. All the other information required by the function is accessed from the globally accessible structure.</p>
+<pre><code class="language-c"><span class="token keyword">int</span>
+<span class="token function">main</span><span class="token punctuation">(</span><span class="token keyword">void</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+        <span class="token comment">// &lt;&lt; code omitted for brevity &gt;&gt;</span>
+
+        <span class="token keyword">for</span><span class="token punctuation">(</span>i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> NUMTHRDS<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token function">pthread_create</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>callThd<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">,</span> dotprod<span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token keyword">void</span> <span class="token operator">*</span><span class="token punctuation">)</span>i<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token comment">// &lt;&lt; code omitted for brevity &gt;&gt;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>The main program creates some input data before it creates threads that perform the dot products. Each thread works on a different slice of data, <code>VECLEN</code> items long, starting at the offset given by <code>i</code>. The main thread waits for each thread to complete. Then, it prints the resulting sum. Since all threads update a shared structure, there is a race condition.</p>
+<p>We will apply RV-Predict/C to <code>dot-product</code> in two steps. Make sure you are in the directory <code>/usr/share/examples/rv-predict-c/c11</code>. First, <code>$ rvpc dot-product.c</code> creates an instrumented version of a multithreaded program that computes a dot product. Second, <code>$ ./a.out</code> runs the program and analyzes its run-time behavior. The results resemble this:</p>
+<pre><code>Thread 0 did  0 to 10:  mysum=10.000000 global sum=10.000000
+Thread 1 did 10 to 20:  mysum=10.000000 global sum=20.000000
+Thread 2 did 20 to 30:  mysum=10.000000 global sum=30.000000
+Sum =  30.000000
+-- Window 1 --
+-- Window 2 --
+Data race on dotstr.sum at dot-product.c:
+    Write in thread 3
+      &gt; in dotprod at .../c11/dot-product.c:62
+    Thread 3 created by thread 1
+        in main at .../c11/dot-product.c:109
+
+    Read in thread 2
+      &gt; in dotprod at .../c11/dot-product.c:64
+    Thread 2 created by thread 1
+        in main at .../c11/dot-product.c:109
+
+Data race on dotstr.sum at dot-product.c:
+    Read in thread 3
+      &gt; in dotprod at .../c11/dot-product.c:62
+    Thread 3 created by thread 1
+        in main at .../c11/dot-product.c:109
+
+    Write in thread 2
+      &gt; in dotprod at .../c11/dot-product.c:62
+    Thread 2 created by thread 1
+        in main at .../c11/dot-product.c:109
+</code></pre>
+<p>First, note that merely running the program does not reveal a data race, because the output and the final result are as expected. However, RV-Predict correctly <em>predicts</em> two data races. The first report describes the case where there can be a concurrent write at line 62, and a concurrent read in the <code>printf</code> statement ending at line 64:</p>
+<pre><code class="language-c"><span class="token number">37</span>         <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"Thread %ld did %2d to %2d:  mysum=%f global sum=%f\n"</span><span class="token punctuation">,</span>
+<span class="token number">38</span>             offset<span class="token punctuation">,</span> start<span class="token punctuation">,</span> end<span class="token punctuation">,</span> mysum<span class="token punctuation">,</span> dotstr<span class="token punctuation">.</span>sum<span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<p>The second report concerns line 62, <code>dotstr.sum += mysum;</code>, where a data race occurs because two threads concurrently read and write the shared variable <code>dotstr.sum</code>.</p>
+<p>This example also showcases the maximality and predictive power of our approach. In particular, consider the results produced for the same program by the widely used LLVM ThreadSanitizer tool.</p>
+<pre><code>Thread 0 did  0 to 10:  mysum=10.000000 global sum=10.000000
+==================
+WARNING: ThreadSanitizer: data race (pid=6206)
+  Write of size 4 at 0x0000014ace50 by thread T2:
+    #0 dotprod /home/dyoung/share/examples/rv-predict-c/c11/dot-product.c:62:13 (dot-product+0x0000004a237d)
+
+  Previous write of size 4 at 0x0000014ace50 by thread T1:
+    #0 dotprod /home/dyoung/share/examples/rv-predict-c/c11/dot-product.c:62:13 (dot-product+0x0000004a237d)
+
+  Location is global 'dotstr' of size 24 at 0x0000014ace40 (dot-product+0x0000014ace50)
+
+  Thread T2 (tid=6209, running) created by main thread at:
+    #0 pthread_create &lt;null&gt; (dot-product+0x000000422236)
+    #1 main /home/dyoung/share/examples/rv-predict-c/c11/dot-product.c:109:3 (dot-product+0x0000004a2128)
+
+  Thread T1 (tid=6208, finished) created by main thread at:
+    #0 pthread_create &lt;null&gt; (dot-product+0x000000422236)
+    #1 main /home/dyoung/share/examples/rv-predict-c/c11/dot-product.c:109:3 (dot-product+0x0000004a2128)
+
+SUMMARY: ThreadSanitizer: data race /home/dyoung/share/examples/rv-predict-c/c11/dot-product.c:62:13 in dotprod
+==================
+Thread 1 did 10 to 20:  mysum=10.000000 global sum=20.000000
+Thread 2 did 20 to 30:  mysum=10.000000 global sum=30.000000
+Sum =  30.000000
+ThreadSanitizer: reported 1 warnings
+</code></pre>
+<p>Note that ThreadSanitizer reports only one data race, specifically, a case where there are two concurrent writes to <code>dotstr.sum</code>. RV-Predict/C predicts that the program can read and write <code>dotstr.sum</code> concurrently. ThreadSanitizer misses the race between lines 62 and 64 entirely.</p>
+<p>Furthermore, consider Helgrind, another widely used tool for detecting concurrency bugs that is part of the Valgrind toolset. (These examples were produced using Valgrind version 3.11.0.) The result of Helgrind analysis is shown below.</p>
+<pre><code>Thread 0 did  0 to 10:  mysum=10.000000 global sum=10.000000
+==17736== ---Thread-Announcement------------------------------------------
+==17736==
+==17736== Thread #3 was created
+==17736==    at 0x516439E: clone (clone.S:74)
+==17736==    by 0x4E46149: create_thread (createthread.c:102)
+==17736==    by 0x4E47E83: pthread_create@@GLIBC_2.2.5 (pthread_create.c:679)
+==17736==    by 0x4C34BB7: ??? (in /usr/lib/valgrind/vgpreload_helgrind-amd64-linux.so)
+==17736==    by 0x40081B: main (dot-product.c:109)
+==17736==
+==17736== ---Thread-Announcement------------------------------------------
+==17736==
+==17736== Thread #2 was created
+==17736==    at 0x516439E: clone (clone.S:74)
+==17736==    by 0x4E46149: create_thread (createthread.c:102)
+==17736==    by 0x4E47E83: pthread_create@@GLIBC_2.2.5 (pthread_create.c:679)
+==17736==    by 0x4C34BB7: ??? (in /usr/lib/valgrind/vgpreload_helgrind-amd64-linux.so)
+==17736==    by 0x40081B: main (dot-product.c:109)
+==17736==
+==17736== ----------------------------------------------------------------
+==17736==
+==17736== Possible data race during read of size 4 at 0x601080 by thread #3
+==17736== Locks held: none
+==17736==    at 0x40095B: dotprod (dot-product.c:62)
+==17736==    by 0x4C34DB6: ??? (in /usr/lib/valgrind/vgpreload_helgrind-amd64-linux.so)
+==17736==    by 0x4E476B9: start_thread (pthread_create.c:333)
+==17736==
+==17736== This conflicts with a previous write of size 4 by thread #2
+==17736== Locks held: none
+==17736==    at 0x400964: dotprod (dot-product.c:62)
+==17736==    by 0x4C34DB6: ??? (in /usr/lib/valgrind/vgpreload_helgrind-amd64-linux.so)
+==17736==    by 0x4E476B9: start_thread (pthread_create.c:333)
+==17736==  Address 0x601080 is 16 bytes inside data symbol "dotstr"
+==17736==
+==17736== ----------------------------------------------------------------
+==17736==
+==17736== Possible data race during write of size 4 at 0x601080 by thread #3
+==17736== Locks held: none
+==17736==    at 0x400964: dotprod (dot-product.c:62)
+==17736==    by 0x4C34DB6: ??? (in /usr/lib/valgrind/vgpreload_helgrind-amd64-linux.so)
+==17736==    by 0x4E476B9: start_thread (pthread_create.c:333)
+==17736==
+==17736== This conflicts with a previous write of size 4 by thread #2
+==17736== Locks held: none
+==17736==    at 0x400964: dotprod (dot-product.c:62)
+==17736==    by 0x4C34DB6: ??? (in /usr/lib/valgrind/vgpreload_helgrind-amd64-linux.so)
+==17736==    by 0x4E476B9: start_thread (pthread_create.c:333)
+==17736==  Address 0x601080 is 16 bytes inside data symbol "dotstr"
+==17736==
+Thread 1 did 10 to 20:  mysum=10.000000 global sum=20.000000
+Thread 2 did 20 to 30:  mysum=10.000000 global sum=30.000000
+Sum =  30.000000
+</code></pre>
+<p>Helgrind is able to detect two data races related to concurrent writes or a concurrent read and a concurrent write at line 62, but not is not able to predict a concurrent write at line 62 and a concurrent read at line 64.</p>
+<h2 id="2.-simple-state-machine">2. Simple State Machine</h2>
+<p>Consider the following example implementing a simple state machine.</p>
+<pre><code class="language-c"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;pthread.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;sched.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdbool.h&gt;</span></span>
+
+<span class="token class-name">pthread_mutex_t</span> l <span class="token operator">=</span> PTHREAD_MUTEX_INITIALIZER<span class="token punctuation">;</span>
+bool ready <span class="token operator">=</span> false<span class="token punctuation">;</span>
+<span class="token keyword">typedef</span> <span class="token keyword">enum</span> <span class="token punctuation">{</span> STOP<span class="token punctuation">,</span> INIT<span class="token punctuation">,</span> START <span class="token punctuation">}</span> <span class="token class-name">state_t</span><span class="token punctuation">;</span>
+<span class="token class-name">state_t</span> state <span class="token operator">=</span> STOP<span class="token punctuation">;</span>
+
+<span class="token keyword">void</span> <span class="token operator">*</span>
+<span class="token function">init</span><span class="token punctuation">(</span><span class="token keyword">void</span> <span class="token operator">*</span>arg<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+      <span class="token function">pthread_mutex_lock</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>l<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      ready <span class="token operator">=</span> true<span class="token punctuation">;</span>
+      <span class="token function">pthread_mutex_unlock</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>l<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      state <span class="token operator">=</span> INIT<span class="token punctuation">;</span>
+      <span class="token function">pthread_mutex_lock</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>l<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      ready <span class="token operator">=</span> true<span class="token punctuation">;</span>
+      <span class="token function">pthread_mutex_unlock</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>l<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">return</span> <span class="token constant">NULL</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">void</span> <span class="token operator">*</span>
+<span class="token function">start</span><span class="token punctuation">(</span><span class="token keyword">void</span> <span class="token operator">*</span>arg<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+      <span class="token function">sched_yield</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token function">pthread_mutex_lock</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>l<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>ready <span class="token operator">&amp;&amp;</span> state <span class="token operator">==</span> INIT<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+              state <span class="token operator">=</span> START<span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+      <span class="token function">pthread_mutex_unlock</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>l<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">return</span> <span class="token constant">NULL</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">void</span> <span class="token operator">*</span>
+<span class="token function">stop</span><span class="token punctuation">(</span><span class="token keyword">void</span> <span class="token operator">*</span>arg<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+      <span class="token function">pthread_mutex_lock</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>l<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      ready <span class="token operator">=</span> false<span class="token punctuation">;</span>
+      state <span class="token operator">=</span> STOP<span class="token punctuation">;</span>
+      <span class="token function">pthread_mutex_unlock</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>l<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">return</span> <span class="token constant">NULL</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">int</span>
+<span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+      <span class="token class-name">pthread_t</span> t1<span class="token punctuation">,</span> t2<span class="token punctuation">,</span> t3<span class="token punctuation">;</span>
+      <span class="token function">pthread_create</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>t1<span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">,</span> init<span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token function">pthread_create</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>t2<span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">,</span> start<span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token function">pthread_create</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>t3<span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">,</span> stop<span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token function">pthread_join</span><span class="token punctuation">(</span>t1<span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token function">pthread_join</span><span class="token punctuation">(</span>t2<span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token function">pthread_join</span><span class="token punctuation">(</span>t3<span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>(For full source see <code>/usr/share/examples/rv-predict-c/c11/simple-state-machine.c</code>.) This program implements a state machine with three states. Each thread models some state machine transitions. The developers seem to have devised a reasonable locking policy that appears to protect shared resources. This class of program is hard to test, since there are many valid observable behaviors. One of the previously mentioned tools, ThreadSanitizer or Helgrind, can be used to increase confidence in the correctness of the program. There are three subtle data races in the program. RV-Predict/C finds them all. Neither ThreadSanitizer nor Helgrind report any problems in it.</p>
+<p>Compile and run the program as shown below:</p>
+<pre><code>rvpc simple-state-machine.c
+./a.out
+</code></pre>
+<p>The results of analysis will be:</p>
+<pre><code>Data race on state at simple-state-machine.c:
+    Write in thread 2
+      &gt; in init at .../simple-state-machine.c:19
+    Thread 2 created by thread 1
+      &gt; in main at .../simple-state-machine.c:52
+
+    Write in thread 3 holding lock l at simple-state-machine.c
+      &gt; in start at .../simple-state-machine.c:32
+      - locked l at simple-state-machine.c start at .../simple-state-machine.c:30
+    Thread 3 created by thread 1
+      &gt; in main at .../simple-state-machine.c:53
+
+    Undefined behavior (UB-CEER5):
+        see C11 section 5.1.2.4:25 http://rvdoc.org/C11/5.1.2.4
+        see C11 section J.2:1 item 5 http://rvdoc.org/C11/J.2
+        see CERT-C section MSC15-C http://rvdoc.org/CERT-C/MSC15-C
+        see MISRA-C section 8.1:3 http://rvdoc.org/MISRA-C/8.1
+</code></pre>
+<p>The first data race can effectively invert the state from START to INIT.</p>
+<pre><code>Data race on state at simple-state-machine.c:
+    Write in thread 2
+      &gt; in init at .../simple-state-machine.c:19
+    Thread 2 created by thread 1
+      &gt; in main at .../simple-state-machine.c:52
+
+    Write in thread 4 holding lock l at simple-state-machine.c
+      &gt; in stop at .../simple-state-machine.c:43
+      - locked l at simple-state-machine.c stop at .../simple-state-machine.c:41
+    Thread 4 created by thread 1
+      &gt; in main at .../simple-state-machine.c:54
+
+    Undefined behavior (UB-CEER5):
+        see C11 section 5.1.2.4:25 http://rvdoc.org/C11/5.1.2.4
+        see C11 section J.2:1 item 5 http://rvdoc.org/C11/J.2
+        see CERT-C section MSC15-C http://rvdoc.org/CERT-C/MSC15-C
+        see MISRA-C section 8.1:3 http://rvdoc.org/MISRA-C/8.1
+</code></pre>
+<p>The second data race may be particularly dangerous, because there are concurrent writes of INIT and STOP to the state variable, which effectively means that the program could start to enter the START state while there were critical reasons to STOP.</p>
+<pre><code>Data race on state at simple-state-machine.c:
+    Write in thread 2
+      &gt; in init at .../simple-state-machine.c:19
+    Thread 2 created by thread 1
+      &gt; in main at .../simple-state-machine.c:52
+
+    Read in thread 3 holding lock l at simple-state-machine.c
+      &gt; in start at .../simple-state-machine.c:31:21
+      - locked l at simple-state-machine.c start at .../simple-state-machine.c:30
+    Thread 3 created by thread 1
+      &gt; in main at .../simple-state-machine.c:53
+
+    Undefined behavior (UB-CEER4):
+        see C11 section 5.1.2.4:25 http://rvdoc.org/C11/5.1.2.4
+        see C11 section J.2:1 item 5 http://rvdoc.org/C11/J.2
+        see CERT-C section MSC15-C http://rvdoc.org/CERT-C/MSC15-C
+        see MISRA-C section 8.1:3 http://rvdoc.org/MISRA-C/8.1
+</code></pre>
+<p>The last data race is due to a write at line 19: <code>state = INIT;</code>, while concurrently reading the current value of the state variable. This data race might lead to a behavior where the START state is not reached.</p>
+<p>In summary, this simple program demonstrates that the state-of-the-art tools can be inadequate to detect subtle data races with possibly dire consequences, while RV-Predict/C can clearly identify all of the data races.</p>
+<h2 id="3.-double-checked-locking">3. Double-checked Locking</h2>
+<p>Suppose you have a shared resource (e.g., a database connection or a large allocation a big chunk of memory) that is expensive to construct, so it is only done when necessary. A common idiom used in such cases is known as double-checked locking pattern. The basic idea is that the pointer is first read without acquiring the lock, and the lock is acquired only if the pointer is NULL. The pointer is then checked again once the lock has been acquired in case another thread has done the initialization between the first check and this thread acquiring a lock.</p>
+<p>For full source see <code>examples/rv-predict-c/c11/double-checked-locking.c</code>.</p>
+<pre><code class="language-c"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;pthread.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdatomic.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdio.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdlib.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">"nbcompat.h"</span></span>
+
+<span class="token keyword">typedef</span> <span class="token keyword">struct</span> <span class="token class-name">_resource</span> <span class="token punctuation">{</span>
+        <span class="token keyword">void</span> <span class="token punctuation">(</span><span class="token operator">*</span>do_something<span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token keyword">void</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span> <span class="token class-name">resource_t</span><span class="token punctuation">;</span>
+
+<span class="token keyword">static</span> <span class="token keyword">void</span>
+<span class="token function">something</span><span class="token punctuation">(</span><span class="token keyword">void</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"something\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token class-name">resource_t</span> <span class="token operator">*</span> <span class="token keyword">volatile</span> resource_ptr <span class="token operator">=</span> <span class="token constant">NULL</span><span class="token punctuation">;</span>
+<span class="token class-name">pthread_mutex_t</span> resource_mutex <span class="token operator">=</span> PTHREAD_MUTEX_INITIALIZER<span class="token punctuation">;</span>
+
+<span class="token keyword">void</span> <span class="token operator">*</span><span class="token function">foo</span><span class="token punctuation">(</span><span class="token keyword">void</span> <span class="token operator">*</span>arg __unused<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>resource_ptr <span class="token operator">==</span> <span class="token constant">NULL</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token function">pthread_mutex_lock</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>resource_mutex<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">if</span> <span class="token punctuation">(</span>resource_ptr <span class="token operator">==</span> <span class="token constant">NULL</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                        <span class="token class-name">resource_t</span> <span class="token operator">*</span>r <span class="token operator">=</span> <span class="token function">malloc</span><span class="token punctuation">(</span><span class="token keyword">sizeof</span><span class="token punctuation">(</span><span class="token operator">*</span>r<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                        r<span class="token operator">-&gt;</span>do_something <span class="token operator">=</span> something<span class="token punctuation">;</span>
+                        resource_ptr <span class="token operator">=</span> r<span class="token punctuation">;</span>
+                <span class="token punctuation">}</span>
+                <span class="token punctuation">(</span><span class="token operator">*</span>resource_ptr<span class="token operator">-&gt;</span>do_something<span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token function">pthread_mutex_unlock</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>resource_mutex<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">return</span> <span class="token constant">NULL</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">int</span>
+<span class="token function">main</span><span class="token punctuation">(</span><span class="token keyword">void</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+        <span class="token class-name">pthread_t</span> t1<span class="token punctuation">,</span> t2<span class="token punctuation">;</span>
+        <span class="token function">pthread_create</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>t1<span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">,</span> foo<span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">pthread_create</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>t2<span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">,</span> foo<span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">pthread_join</span><span class="token punctuation">(</span>t1<span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">pthread_join</span><span class="token punctuation">(</span>t2<span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>However, this pattern has become infamous because it has potential for a nasty race condition. As shown below, RV-Predict/C detect the race condition. Specifically, the data race occurs because the read outside the lock is not synchronized with the write done by the thread inside the lock. The race condition includes the pointer and the object pointed to: even if a thread sees the pointer written by another thread, it might not see the newly created instance of <code>some_resource</code>, resulting in the call to <code>do_something()</code> operating on incorrect values.</p>
+<pre><code>Data race on resource_ptr at double-checked-locking.c:
+    Read in thread 3
+      &gt; in foo at .../double-checked-locking.c:22:19
+    Thread 3 created by thread 1
+      &gt; in main at .../double-checked-locking.c:40
+
+    Write in thread 2 holding lock resource_mutex at double-checked-locking.c
+      &gt; in foo at .../double-checked-locking.c:27
+      - locked resource_mutex at double-checked-locking.c foo at .../double-checked-locking.c:23
+    Thread 2 created by thread 1
+      &gt; in main at .../double-checked-locking.c:39
+</code></pre>
+<h2 id="4.-broken-spinnning-loop">4. Broken Spinnning Loop</h2>
+<p>Sometimes we want to synchronize multiple threads based on whether some condition has been met. And it is a common pattern to use a while loop that repeatedly checks that condition:</p>
+<pre><code class="language-c"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;err.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;pthread.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;sched.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdbool.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdlib.h&gt;</span></span>
+
+bool condition <span class="token operator">=</span> false<span class="token punctuation">;</span>
+<span class="token keyword">int</span> sharedVar<span class="token punctuation">;</span>
+
+<span class="token keyword">void</span> <span class="token operator">*</span>
+<span class="token function">thread1</span><span class="token punctuation">(</span><span class="token keyword">void</span> <span class="token operator">*</span>arg<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+        sharedVar <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+        condition <span class="token operator">=</span> true<span class="token punctuation">;</span>
+        <span class="token keyword">return</span> <span class="token constant">NULL</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">void</span> <span class="token operator">*</span>
+<span class="token function">thread2</span><span class="token punctuation">(</span><span class="token keyword">void</span> <span class="token operator">*</span>arg<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+        <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token operator">!</span>condition<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token function">sched_yield</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>sharedVar <span class="token operator">!=</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token function">errx</span><span class="token punctuation">(</span>EXIT_FAILURE<span class="token punctuation">,</span> <span class="token string">"How is this possible!?"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">return</span> <span class="token constant">NULL</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">int</span>
+<span class="token function">main</span><span class="token punctuation">(</span><span class="token keyword">void</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+        <span class="token class-name">pthread_t</span> t1<span class="token punctuation">,</span> t2<span class="token punctuation">;</span>
+
+        <span class="token function">pthread_create</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>t1<span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">,</span> thread1<span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">pthread_create</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>t2<span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">,</span> thread2<span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">pthread_join</span><span class="token punctuation">(</span>t1<span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">pthread_join</span><span class="token punctuation">(</span>t2<span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>As shown below, RV-Predict/C detects a data race on <code>condition</code>.</p>
+<pre><code>Data race on condition at spinning-loop.c:
+    Write in thread 2
+      &gt; in thread1 at .../spinning-loop.c:18
+    Thread 2 created by thread 1
+      &gt; in main at .../spinning-loop.c:39
+
+    Read in thread 3
+      &gt; in thread2 at .../spinning-loop.c:25:9
+    Thread 3 created by thread 1
+      &gt; in main at .../spinning-loop.c:40
+</code></pre>
+</body></html></div>
+        </main>
+
+        <!-- Page ToC -->
+        <div class="col-12 col-md-3 col-xl-2 py-md-3 bd-sidebar page-toc mb-3">
+          
+<div>
+<details style="padding:0.25rem 0;;padding-left: 0px;">
+            <summary class="bd-toc-link-wrapper">
+              <a href="#running-the-examples" class="bd-toc-link">Running the examples</a>
+              </summary>
+            <div>
+              <details style="padding:0.25rem 0;;padding-left: 8px;">
+            <summary class="bd-toc-link-wrapper">
+              <a href="#1.-concurrent-access-to-a-shared-variable" class="bd-toc-link">1. Concurrent Access to a Shared Variable</a>
+              </summary>
+            <div>
+              <div class="bd-toc-link-wrapper" style="padding:0.25rem 0;">
+              <a
+                href="#posix-threads"
+                class="bd-toc-link"
+                style="padding-left: 16px;;"
+              >
+                POSIX Threads
+              </a></div>
+            </div>
+          </details>
+        <div class="bd-toc-link-wrapper" style="padding:0.25rem 0;">
+              <a
+                href="#2.-simple-state-machine"
+                class="bd-toc-link"
+                style="padding-left: 8px;;"
+              >
+                2. Simple State Machine
+              </a></div><div class="bd-toc-link-wrapper" style="padding:0.25rem 0;">
+              <a
+                href="#3.-double-checked-locking"
+                class="bd-toc-link"
+                style="padding-left: 8px;;"
+              >
+                3. Double-checked Locking
+              </a></div><div class="bd-toc-link-wrapper" style="padding:0.25rem 0;">
+              <a
+                href="#4.-broken-spinnning-loop"
+                class="bd-toc-link"
+                style="padding-left: 8px;;"
+              >
+                4. Broken Spinnning Loop
+              </a></div>
+            </div>
+          </details>
+        
+</div>
+
+        </div>
+        <div class="btn btn-rv-blue page-toc-toggle-btn"></div>
+        <!-- End Page ToC -->
+      </div>
+    </div>
+<!-- The footer is now controlled by the k-web-theme git submodule -->
+<footer id="rvsite-footer" class="app-footer text-md-left text-center">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-4 mb-md-0 mb-4">
+        <a href="https://runtimeverification.com/" target="_blank">
+          <picture>
+            <source
+              srcset="
+                https://runtimeverification.com/assets/img/rv-logo-dark.png
+              "
+              media="(prefers-color-scheme: dark)"
+            />
+            <img
+              class="logo-dark"
+              src="https://runtimeverification.com/assets/img/rv-logo.png"
+              alt="Runtime Verification logo"
+              style="height: 32px"
+            /> </picture
+        ></a>
+        <p class="mt-2 text-md-left copyright">
+          <a href="https://maps.app.goo.gl/8YhKozfmZtgzQBsH7" target="_blank"
+            >202 S Broadway Ave #31, Urbana, IL</a
+          >
+        </p>
+      </div>
+      <div class="col-md-4 text-md-center mb-md-0 mb-4"></div>
+      <div class="col-md-4 mb-md-0 mb-4 pl-0 text-md-right">
+        <p class="copyright">2024 © all rights reserved</p>
+        <span class="copyright"
+          ><a href="https://runtimeverification.com/privacy-policy"
+            >privacy policy</a
+          >
+          |
+          <a href="https://runtimeverification.com/terms-of-use"
+            >terms of use</a
+          ></span
+        >
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Typist/1.2/typist.min.js"></script>
+    <script src="../../../assets/js/index.js"></script>
+  </body>
+</html>

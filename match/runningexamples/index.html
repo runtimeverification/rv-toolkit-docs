@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+<meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+/>
+<meta
+  name="description"
+  content="Design and implement your programming language and software analysis tools with mathematical rigor."
+/>
+<meta name="keywords" content="runtime, verification, rv, k" />
+<meta name="author" content="RV-Toolkit | Runtime Verification Inc" />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://runtimeverification.github.io/rv-toolkit-docs/match/runningexamples/" />
+
+<!--favicon icon-->
+<link rel="icon" type="image/png" href="../../assets/img/favicon.ico" />
+
+<title>RV-Toolkit | Runtime Verification Inc</title>
+
+<!-- <base href="/k/" /> -->
+
+<!--web fonts-->
+<link
+  href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,800"
+  rel="stylesheet"
+/>
+<link
+  href="https://fonts.googleapis.com/css?family=Lora:400i"
+  rel="stylesheet"
+/>
+
+<link
+  href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css"
+  rel="stylesheet"
+/>
+
+<link href="../../assets/css/index.css" rel="stylesheet" />
+
+<!--[if (gt IE 9) |!(IE)]><!-->
+<!--<link rel="stylesheet" href="/assets/vendor/custom-nav/css/effects/fade-menu.css"/>-->
+<!-- <link rel="stylesheet" href="../../assets/k/vl-nav/css/effects/slide-menu.css" /> -->
+<!--<![endif]-->
+
+  </head>
+
+  <body>
+<header
+  class="navbar navbar-expand navbar-dark flex-column flex-md-row bd-navbar"
+>
+  <a class="logo-link" href="../../index.html"> RV-Toolkit </a>
+  <ul class="navbar-nav ml-md-auto">
+    <li class="nav-item">
+      <a
+        class="nav-link pl-2 pr-1 mx-1 py-3 my-n2"
+        href="https://github.com/runtimeverification/rv-toolkit-docs"
+        target="_blank"
+        rel="noopener"
+        aria-label="GitHub"
+      >
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  </ul>
+  <!--
+  <a
+    class="btn btn-rv-blue d-none d-lg-inline-block mb-3 mb-md-0 ml-md-3"
+    href="../../downloads"
+    >Download</a
+  >
+  -->
+</header>
+
+
+    <div class="container-fluid">
+      <div class="row flex-xl-nowrap">
+<div class="col-12 col-md-3 col-xl-2 bd-sidebar mb-3">
+    <form
+      role="search"
+      class="bd-search d-flex align-items-center justify-content-between"
+    >
+      <input
+        type="search"
+        class="form-control"
+        placeholder="Search..."
+        aria-label="Search for..."
+        autocomplete="false"
+        id="search-box"
+      />
+      <button
+        class="btn bd-search-docs-toggle d-md-none p-0 ml-3 collapsed"
+        type="button"
+        aria-label="Toggle docs navigation"
+        style="font-size: 1.4rem"
+      >
+        <i class="fas fa-bars"></i>
+      </button>
+    </form>
+    <nav class="collapse bd-links" aria-label="Main navigation">
+      <div class="bd-toc-item">
+        <a class="bd-toc-link" href="../../match/">Welcome!</a>
+        <a class="bd-toc-link" href="../../match/installing/">Installing</a>
+        <a class="bd-toc-link" href="../../match/quickstart/">Quickstart</a>
+        <a class="bd-toc-link" href="../../match/vagrant/"
+          >Running Vagrant VM</a
+        >
+        <a class="bd-toc-link" href="../../match/runningexamples/"
+          >Running Examples</a
+        >
+        <a class="bd-toc-link" href="../../match/benchmark/"
+          >Toyota ITC Benchmark</a
+        >
+        <a class="bd-toc-link" href="../../match/eclipse/"
+          >Eclipse Integration</a
+        >
+        <a class="bd-toc-link" href="../../match/reporting/"
+          >Creating Error Reports</a
+        >
+        <a class="bd-toc-link" href="../../match/troubleshooting/"
+          >Problems running RV-Match?</a
+        >
+        <a
+          class="bd-toc-link"
+          href="https://runtimeverification.com/blog/category/rv-match/"
+          target="_blank"
+          >RV-Match Blog</a
+        >
+      </div>
+    </nav>
+  </div>
+  
+        <main
+          class="col-12 col-md-6 col-xl-8 py-md-3 pl-md-5 bd-content"
+          role="main"
+        >
+          <div class="introduction markdown-preview"><html><head></head><body><h1 id="running-examples">Running Examples</h1>
+<p>We provide several examples showcasing various capabilities of RV-Match’s <code>kcc</code> tool, in a folder <a href="https://github.com/kframework/c-semantics/tree/master/examples/c" target="_blank" rel="noreferrer noopener">examples</a>. We recommend <a href="https://github.com/kframework/c-semantics/tree/master/examples/c/demo" target="_blank" rel="noreferrer noopener">examples/demo</a> as a good starting point for exploring the bug finding capabilities of <code>kcc</code>. For any file in that directory, simply run <code>kcc [file].c</code> to compile it, followed by <code>./a.out</code> to execute it. We next discuss some of the programs in the demo folder, mentioning that they only cover a small subset of the errors that <code>kcc</code> can report.</p>
+<h2 id="unsequenced-side-effects">Unsequenced Side Effects</h2>
+<p>At its most basic level, <code>kcc</code> can detect undefined behaviors in programs. Consider the following three-line <code>1-unsequenced-side-effect.c</code> program:</p>
+<pre><code class="language-c"><span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">int</span> x <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span> <span class="token punctuation">(</span>x <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token punctuation">(</span>x <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>If you compile it using <code>clang</code>, you get a warning about the undefined behavior, but it returns 3 like one might expect. A developer might choose to ignore this warning, not understanding its significance. However, then one day you decide to switch compilers and run this program with <code>gcc</code>. Suddenly, you get the entirely unexpected value of 4. How is this possible? Well, compilers are allowed to optimize however they choose as long as they do not affect the behavior of well-defined programs. So what <code>gcc</code> has chosen to do is to hoist the side effects out of the addition expression so that they happen before. Thus this program becomes:</p>
+<pre><code class="language-c"><span class="token keyword">int</span> x <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+x <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+x <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">;</span>
+<span class="token keyword">return</span> x <span class="token operator">+</span> x<span class="token punctuation">;</span>
+</code></pre>
+<p>This example demonstrates how the increased optimization of compilers means that even quite simple and harmless-seeming undefined behaviors can actually affect the behavior of the program. As a developer, you should avoid writing such programs with undefined behaviors. When compiled with <code>kcc</code>, you get the following error message when you run the same program:</p>
+<pre><code>Unsequenced side effect on scalar object with side effect of same object.
+  at main(1-unsequenced-side-effect.c:25:3)
+ Undefined behavior (UB-EIO8).
+  see C11 section 6.5:2 http://rvdoc.org/C11/6.5
+  see C11 section J.2:1 item 35 http://rvdoc.org/C11/J.2
+  see CERT-C section EXP30-C http://rvdoc.org/CERT-C/EXP30-C
+</code></pre>
+<p>The error message explains what the problem is and refers you to the specific sections in the <a href="http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=57853" target="_blank" rel="noreferrer noopener">ISO C11 Standard</a> that discuss it. There are more than 150 <a href="https://github.com/kframework/c-semantics/blob/master/examples/c/error-codes/Error_Codes.csv" target="_blank" rel="noreferrer noopener">error codes</a> like UB-EIO8 above that kcc can report, as well as corresponding <a href="https://github.com/kframework/c-semantics/tree/master/examples/c/error-codes" target="_blank" rel="noreferrer noopener">canonical programs</a> illustrating them.</p>
+<h2 id="buffer-overflows-and-underflows">Buffer Overflows and Underflows</h2>
+<p>It is well-known that programs allowing buffer overflows or underflows are susceptible of security attacks, and thus should be avoided by any possible means. <code>kcc</code> is capable of detecting quite a wide variety of different buffer overflows. The file <a href="https://github.com/kframework/c-semantics/blob/master/examples/c/demo/2-buffer-overflow.c" target="_blank" rel="noreferrer noopener">2-buffer-overflow.c</a> illustrates buffers with both internal, external, and no linkage, buffers with both static and automatic storage duration, and buffers aliased through both static- and automatic-storage pointers. In each case, <code>kcc</code> is able to detect the buffer overflow and print a stack trace on the command line of where it has occurred in the program. <code>kcc</code> can also detect buffer overflows within the subobjects of an aggregate type. Program <code>3-array-in-struct.c</code> shows a struct declared with an array followed by an integer:</p>
+<pre><code class="language-c"><span class="token keyword">struct</span> <span class="token class-name">foo</span> <span class="token punctuation">{</span>
+  <span class="token keyword">char</span> buffer<span class="token punctuation">[</span><span class="token number">32</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token keyword">int</span> secret<span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+<span class="token keyword">int</span> idx <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+
+<span class="token keyword">void</span> <span class="token function">setIdx</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  idx <span class="token operator">=</span> <span class="token number">32</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token function">setIdx</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">struct</span> <span class="token class-name">foo</span> x <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token number">0</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+  x<span class="token punctuation">.</span>secret <span class="token operator">=</span> <span class="token number">5</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span> x<span class="token punctuation">.</span>buffer<span class="token punctuation">[</span>idx<span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>It is correct to assume that the struct is laid out sequentially in memory. However, nonetheless, it is a buffer overflow to access the 32nd index of this array because it was declared with size 32. <code>gcc</code> succesfully compiles this program and the secret 5 is returned when executed, showing how easily buffer overflows can leak sensitive information contained elsewhere in a struct. As expected, <code>kcc</code> correctly reports an error:</p>
+<pre><code>Dereferencing a pointer past the end of an array.
+  at main(3-array-in-struct.c:24:3)
+ Undefined behavior (UB-CER4).
+  see C11 section 6.5.6:8 http://rvdoc.org/C11/6.5.6
+  see C11 section J.2:1 items 47 and 49 http://rvdoc.org/C11/J.2
+  see CERT-C section ARR30-C http://rvdoc.org/CERT-C/ARR30-C
+  see CERT-C section ARR37-C http://rvdoc.org/CERT-C/ARR37-C
+  see CERT-C section STR31-C http://rvdoc.org/CERT-C/STR31-C
+</code></pre>
+<p>Similarly, <code>kcc</code> can detect buffer underflows. For example, <code>4-buffer-underflow-external.c</code> shows a buffer underflow based on the initialized value of a global variable found elsewhere in the program:</p>
+<pre><code class="language-c"><span class="token keyword">unsigned</span> <span class="token keyword">int</span> gi <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">unsigned</span> <span class="token keyword">int</span> i<span class="token punctuation">;</span>
+  <span class="token keyword">unsigned</span> <span class="token keyword">int</span> ary<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">50</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+  i <span class="token operator">=</span> gi<span class="token punctuation">;</span>
+  ary<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">[</span>i<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span> ary<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">[</span>i<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p><code>gcc</code> compiles this program with no warnings or errors and the resulting executable returns 2. Because <code>kcc</code> is a dynamic analysis tool, we run the program and are thus actually aware of the value that <code>gi</code> has during its assignment statement. No matter what logic has modified <code>gi</code> up to this point, if its value is zero when we execute:</p>
+<pre><code class="language-c">i <span class="token operator">=</span> gi<span class="token punctuation">;</span>
+ary<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">[</span>i<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">;</span>
+</code></pre>
+<p>we will detect the buffer underflow on the second dimension of the array. In fact, <code>kcc</code> detects several undefined behavior errors in this program.</p>
+<h2 id="input-dependent-behavior">Input-Dependent Behavior</h2>
+<p>We now discuss an example showing that undefined behavior can depend on the non-deterministic environment in which the program is executed. Consider the program <code>5-buffer-overflow-environment.c</code>:</p>
+<pre><code class="language-c"><span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">sampleFunc</span><span class="token punctuation">(</span><span class="token keyword">char</span> <span class="token operator">*</span>path<span class="token punctuation">,</span> <span class="token keyword">char</span> <span class="token operator">*</span>input<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">char</span> <span class="token operator">*</span>argvptr<span class="token punctuation">;</span>
+  argvptr <span class="token operator">=</span> input<span class="token punctuation">;</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>argvptr<span class="token punctuation">)</span>
+    <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token operator">*</span>path<span class="token operator">++</span> <span class="token operator">=</span> <span class="token operator">*</span>argvptr<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token operator">!=</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token keyword">int</span> argc<span class="token punctuation">,</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token operator">*</span>argv<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">char</span> p<span class="token punctuation">[</span><span class="token number">10</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token function">sampleFunc</span><span class="token punctuation">(</span>p<span class="token punctuation">,</span> argv<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>If we pass no argument to this executable, the while loop is not called. If we pass an argument with no more than 9 characters (10 with the null terminator), the program is also well-defined. However, if we pass a longer string as input, then a buffer overflow occurs. This buffer overflow may or may not result in a runtime error when the program is compiled with conventional compilers like <code>gcc</code>, depending on the size of the input; for example, you will most likely see no error when you pass it the 10-character input <code>abcdefghij</code>. When compiled with <code>kcc</code>, several undefined behavior errors are reported making it clear what the problem is and where:</p>
+<pre><code>A pointer (or array subscript) outside the bounds of an object.
+  at sampleFunc(5-buffer-overflow-environment.c:18:5)
+  by main(5-buffer-overflow-environment.c:24:3)
+ Undefined behavior (UB-CEA1).
+  see C11 section 6.5.6:8 http://rvdoc.org/C11/6.5.6
+  see C11 section J.2:1 item 46 http://rvdoc.org/C11/J.2
+  see CERT-C section ARR30-C http://rvdoc.org/CERT-C/ARR30-C
+  see CERT-C section ARR37-C http://rvdoc.org/CERT-C/ARR37-C
+  see CERT-C section STR31-C http://rvdoc.org/CERT-C/STR31-C
+Found pointer that refers outside the bounds of an object + 1.
+  at sampleFunc(5-buffer-overflow-environment.c:18:5)
+  by main(5-buffer-overflow-environment.c:24:3)
+ Undefined behavior (UB-CEE3).
+  see C11 section 6.3.2.1:1 http://rvdoc.org/C11/6.3.2.1
+  see C11 section J.2:1 item 19 http://rvdoc.org/C11/J.2
+  see CERT-C section ARR30-C http://rvdoc.org/CERT-C/ARR30-C
+  see CERT-C section ARR37-C http://rvdoc.org/CERT-C/ARR37-C
+  see CERT-C section STR31-C http://rvdoc.org/CERT-C/STR31-C
+Dereferencing a pointer past the end of an array.
+  at sampleFunc(5-buffer-overflow-environment.c:18:5)
+  by main(5-buffer-overflow-environment.c:24:3)
+ Undefined behavior (UB-CER4).
+  see C11 section 6.5.6:8 http://rvdoc.org/C11/6.5.6
+  see C11 section J.2:1 items 47 and 49 http://rvdoc.org/C11/J.2
+  see CERT-C section ARR30-C http://rvdoc.org/CERT-C/ARR30-C
+  see CERT-C section ARR37-C http://rvdoc.org/CERT-C/ARR37-C
+  see CERT-C section STR31-C http://rvdoc.org/CERT-C/STR31-C
+Trying to write outside the bounds of an object.
+  at sampleFunc(5-buffer-overflow-environment.c:18:5)
+  by main(5-buffer-overflow-environment.c:24:3)
+ Undefined behavior (UB-EIO2).
+  see C11 section 6.5.6:8 http://rvdoc.org/C11/6.5.6
+  see C11 section J.2:1 items 47 and 49 http://rvdoc.org/C11/J.2
+  see CERT-C section ARR30-C http://rvdoc.org/CERT-C/ARR30-C
+  see CERT-C section ARR37-C http://rvdoc.org/CERT-C/ARR37-C
+  see CERT-C section MEM35-C http://rvdoc.org/CERT-C/MEM35-C
+  see CERT-C section STR31-C http://rvdoc.org/CERT-C/STR31-C
+</code></pre>
+<p>If we pass it a string of fewer characters, say <code>abcdefghi</code>, then <code>kcc</code> reports no errors. Therefore, <code>kcc</code> is very precise, following the exact path explored during the actual execution of the program and thus reporting no false alarms. On the other hand, the price to pay for its precision is that it can miss errors; indeed, if all your tests for the program above have inputs of 9 characters or less, then <code>kcc</code> currently has no chance to detect the buffer overflow.</p>
+<p>We plan to extend RV-Match in the future with (bounded model checking) technology that can explore the nondeterministic state space of a program based on its input conditions, which would eventually allow errors of this type to be detected even if the user cannot think of an input that exercises the bug. This will be possible still without the need for any false positives.</p>
+<p>In the meanwhile, we recommend RV-Match to be used as a complementary approach to static analysis, and not as a replacement of it, by simply executing your existing unit tests compiled with <code>kcc</code> instead of <code>gcc</code> (or your usual compiler). This is currently the best way to maximize the benefits of <code>kcc</code>, because unit tests tend to provide good code/path coverage and to be fast.</p>
+<h2 id="implementation-defined-behavior">Implementation-Defined Behavior</h2>
+<p><code>kcc</code> is also able to detect errors related to implementation-defined behavior, which the C standard defines as unspecified behavior where each implementation documents how the choice is made. <code>kcc</code> can be instantiated with different profiles corresponding to different implementation choices (type kcc -v to see the existing profiles; <a href="https://runtimeverification.com/contact" target="_blank" rel="noreferrer noopener">contact us</a> if you are interested in a specific profile that is not available. An example of implementation-defined behavior is the conversion to a type that cannot store a specified value, thus triggering a loss of precision. Consider the following <code>6-int-overflow.c</code> program, which executes without any reported errors when compiled with conventional compilers like <code>gcc</code>:</p>
+<pre><code class="language-c"><span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">short</span> <span class="token keyword">int</span> a <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+  <span class="token keyword">int</span> i<span class="token punctuation">;</span>
+  <span class="token keyword">for</span> <span class="token punctuation">(</span>i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> <span class="token number">15</span><span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    a <span class="token operator">*=</span> <span class="token number">2</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">return</span> a<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>When compiled with the default <code>kcc</code> profile (x86_64 on linux), the program above reports an implementation-defined behavior error:</p>
+<pre><code>Conversion to signed integer outside the range that can be represented.
+  at main(6-int-overflow.c:29:5)
+ Implementation defined behavior (IMPL-CCV2).
+  see C11 section 6.3.1.3:3 http://rvdoc.org/C11/6.3.1.3
+  see C11 section J.3.5:1 item 4 http://rvdoc.org/C11/J.3.5
+  see CERT-C section INT31-C http://rvdoc.org/CERT-C/INT31-C
+</code></pre>
+<p>However, no error is reported if you declare variable <code>a</code> as <code>int</code> instead of <code>short int</code>, or if you iterate 14 times instead of 15. What happens above is that the multiplication of <code>a</code> by 2 promotes the result to the <code>int</code> type at every step, and then converts it back to a <code>short int</code> in order to write <code>a</code>; at some moment during the execution of the program this conversion cannot be made without loss of precision, and at that moment the error above is reported by our tool. However, in actual fact, because the program above as written is implementation-defined, on some systems it may in fact raise an arithmetic signal terminating the application at the point of the lossy conversion. But of course there is no guarantee that it will happen and thus such a dangerous implementation-defined behavior may pass undetected during normal testing, crashing your application when deployed on a different platform.</p>
+<p>Note that even the most experienced C programmers can get confused in the presence of implementation-defined behavior, and especially at the boundary between undefined behavior and implementation-defined behavior. For example, one may wrongly think that the program above manifests an integer overflow behavior, which according to the C standard is an undefined behavior. If you declared <code>a</code> as an <code>int</code> and iterated 31 times, you would then indeed see an undefined behavior corresponding to a true integer overflow.</p>
+<h2 id="out-of-lifetime-access">Out of Lifetime Access</h2>
+<p>Consider the program 7-out-of-lifetime.c:</p>
+<pre><code class="language-c"><span class="token keyword">int</span> <span class="token operator">*</span><span class="token function">foo</span><span class="token punctuation">(</span><span class="token keyword">int</span> x<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">int</span> z <span class="token operator">=</span> x<span class="token punctuation">;</span>
+  <span class="token keyword">int</span> <span class="token operator">*</span>y <span class="token operator">=</span> <span class="token operator">&amp;</span>z<span class="token punctuation">;</span>
+  <span class="token keyword">return</span> y<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">int</span> <span class="token operator">*</span>x <span class="token operator">=</span> <span class="token function">foo</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">foo</span><span class="token punctuation">(</span><span class="token number">255</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span> <span class="token operator">*</span>x<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>When this example is run with <code>gcc -O3</code>, the value stored in <code>z</code> can be seen when the program exits. However, if optimizations are disabled or if a different compiler is used, the layout of variables on the stack may change. This causes the call <code>foo(255)</code> to overwrite the same location in memory that was used for the integer <code>z</code> in the first call to <code>foo</code>. Because the variable <code>z</code>‘s lifetime has ended when <code>foo</code> returns, it is undefined for us to have returned a pointer to it from the function. Thus we find that the pointer <code>x</code> has an indeterminate value and can be changed by subsequent calls to <code>foo</code>. As a result of this, we see the value 255 returned from <code>main</code>, which is not what we expected. This again underscores the importance of avoiding undefined behavior in programs, because it can lead to unexpected behaviors like this. When run with <code>kcc</code>, the following errors are reported:</p>
+<pre><code>Referring to an object outside of its lifetime.
+  at main(7-out-of-lifetime.c:22:3)
+ Undefined behavior (UB-CEE4).
+  see C11 section 6.2.4:2 http://rvdoc.org/C11/6.2.4
+  see C11 section J.2:1 item 9 http://rvdoc.org/C11/J.2
+  see CERT-C section DCL21-C http://rvdoc.org/CERT-C/DCL21-C
+  see CERT-C section DCL30-C http://rvdoc.org/CERT-C/DCL30-C
+  see CERT-C section MEM30-C http://rvdoc.org/CERT-C/MEM30-C
+Referring to an object outside of its lifetime.
+  at main(7-out-of-lifetime.c:23:3)
+ Undefined behavior (UB-CEE4).
+  see C11 section 6.2.4:2 http://rvdoc.org/C11/6.2.4
+  see C11 section J.2:1 item 9 http://rvdoc.org/C11/J.2
+  see CERT-C section DCL21-C http://rvdoc.org/CERT-C/DCL21-C
+  see CERT-C section DCL30-C http://rvdoc.org/CERT-C/DCL30-C
+  see CERT-C section MEM30-C http://rvdoc.org/CERT-C/MEM30-C
+</code></pre>
+<h2 id="overflow-and-optimizations">Overflow and Optimizations</h2>
+<p>As an example of a program that seems to run perfectly in one environment but can crash or behave incorrectly in another environment consider the program <code>8-int-overflow-tricky.c</code>:</p>
+<pre><code class="language-c"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span><span class="token string">&lt;stdlib.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span><span class="token string">&lt;limits.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span><span class="token string">&lt;stdarg.h&gt;</span></span>
+
+<span class="token keyword">void</span> <span class="token function">foo</span><span class="token punctuation">(</span><span class="token keyword">int</span> n<span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  va_list l<span class="token punctuation">;</span>
+  <span class="token function">va_start</span><span class="token punctuation">(</span>l<span class="token punctuation">,</span> n<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">char</span> <span class="token operator">*</span>x <span class="token operator">=</span> <span class="token function">va_arg</span><span class="token punctuation">(</span>l<span class="token punctuation">,</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  x<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+  x<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token function">va_end</span><span class="token punctuation">(</span>l<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">void</span> <span class="token function">process_something</span><span class="token punctuation">(</span><span class="token keyword">int</span> size<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>size <span class="token operator">&lt;</span> <span class="token number">0</span><span class="token punctuation">)</span>
+    <span class="token function">abort</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token comment">// check for overflow</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>size <span class="token operator">&gt;</span> size<span class="token operator">+</span><span class="token number">2</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span><span class="token punctuation">;</span>
+  <span class="token keyword">char</span> <span class="token operator">*</span>string <span class="token operator">=</span> <span class="token function">malloc</span><span class="token punctuation">(</span>size<span class="token operator">+</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  string<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token char">'f'</span><span class="token punctuation">;</span>
+  string<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token char">'\000'</span><span class="token punctuation">;</span>
+  <span class="token keyword">char</span> x<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token function">foo</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> string<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token function">process_something</span><span class="token punctuation">(</span>INT_MAX<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>Note the line annotated “check for overflow”. A user, on seeing this program, may assume that this check correctly handles the case where <code>size+2</code> overflows, and that this program will therefore exit normally after returning from the function without calling <code>malloc</code>. Indeed, if you compile this program with <code>gcc</code> using no flags, that is exactly what happens.</p>
+<p>However, if at a later date someday you decide to change your compiler flags and build with <code>-O3</code>, suddenly this program will segfault. Why? Well, overflow on a signed integer is what is considered an exceptional condition, and according to the ISO C11 standard, this behavior is undefined. <code>gcc</code> is free to assume that undefined behavior can never occur and optimize accordingly, thus causing the line <code>if (size &gt; size+2)</code> to be replaced in the resulting binary with <code>if (0)</code>.</p>
+<p><code>kcc</code> correctly reports the signed overflow error:</p>
+<pre><code>Signed integer overflow.
+  at process_something(8-int-overflow-tricky.c:48:3)
+  by main(8-int-overflow-tricky.c:59:3)
+ Undefined behavior (UB-CCV1).
+  see C11 section 6.5:5 http://rvdoc.org/C11/6.5
+  see C11 section J.2:1 item 36 http://rvdoc.org/C11/J.2
+  see CERT-C section INT32-C http://rvdoc.org/CERT-C/INT32-C
+</code></pre>
+<h2 id="warnings%2C-or-lint-style-issues">Warnings, or Lint-Style Issues</h2>
+<p>There is a sharp distinction between <em>errors</em> and <em>warnings</em> in our C semantics and <code>kcc</code>. Errors violate the ISO C11 standard, so you must fix them immediately if you want your program to be standards-compliant and thus portable. On the other hand, warnings, which we also refer to as <em>lint-style issues</em>, may be indicative of potential defects in your program even though they can also occur in strictly-conforming C11 programs. Fixing warnings is optional. For example, most coding guidelines that aim at safer code, like <a href="https://en.wikipedia.org/wiki/MISRA_C" target="_blank" rel="noreferrer noopener">Misra-C</a>, <em>require</em> standard-compliance but are subjective in what regards lint-style issues, or warnings. <code>kcc</code> also provides a mechanism that can detect a collection of common lint-style issues, and it continues to expand it at our customer requests, which are reported as warnings when you use the <code>-Wlint</code> option/flag. For example, the program <code>9-memory-leak.c</code> below exhibits a memory leak, wherein memory is allocated by <code>malloc</code> but never freed:</p>
+<pre><code class="language-c"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span><span class="token string">&lt;stdlib.h&gt;</span></span>
+
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">int</span> <span class="token operator">*</span>x <span class="token operator">=</span> <span class="token function">malloc</span><span class="token punctuation">(</span><span class="token keyword">sizeof</span><span class="token punctuation">(</span><span class="token keyword">int</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token operator">*</span>x <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span> <span class="token operator">*</span>x<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>No compiler reports any issues with this program and no runtime errors are reported when executed. Same with <code>kcc</code> by default, because indeed, this program does not violate any of the ISO C11 standard rules. However, if you compile this program with <code>kcc -Wlint</code> and execute it, then you get the following warning report:</p>
+<pre><code>Memory malloced but never freed.
+ Malloced here:
+  at malloc(9-memory-leak.c:26:3)
+  by main(9-memory-leak.c:26:3)
+ Possible unintended behavior (L-CEIE1).
+  see CERT-C section MEM31-C http://rvdoc.org/CERT-C/MEM31-C
+</code></pre>
+<p>Besides memory leaks, <code>kcc</code> reports several other kinds of warnings such as unsigned integer overflow, terminating a thread while holding a lock, allocating more memory on the heap than is allowed by the operating system, etc.</p>
+<p>The <code>-Wlint</code> flag does not alter the semantics of the program in any way aside from assigning a maximum memory size configurable using <code>-fheap-size</code>, beyond which heap-allocation functions like <code>malloc</code> will report a warning and return a null pointer. Some of the warnings reported when using the <code>Wlint</code> option may be unnecessary, in the sense that the behavior being reported was indeed your intention. Note, however, that <code>kcc</code> still reports no false positives, in the sense that if a warning is reported as a result of <code>Wlint</code>, then there really exists a real code execution for which the specific behavior being detected did occur.</p>
+<h2 id="and-many-more">And Many More</h2>
+<p>The above are only a few of the different types of errors, like undefined behavior, that <code>kcc</code> is able to detect. Other undefined behaviors which have been discovered frequently in real code bases include use of functions that have not been declared, creation of incorrectly aligned pointers, comparison between pointers to different memory objects, and incorrect use of dynamic format strings to <code>printf</code>. If you want to see all the different types of errors or warnings that <code>kcc</code> can report, see its complete list of <a href="https://github.com/kframework/c-semantics/blob/master/examples/c/error-codes/Error_Codes.csv" target="_blank" rel="noreferrer noopener">error codes</a> as well as the corresponding <a href="https://github.com/kframework/c-semantics/tree/master/examples/c/error-codes" target="_blank" rel="noreferrer noopener">canonical programs</a> illustrating them.</p>
+</body></html></div>
+        </main>
+
+        <!-- Page ToC -->
+        <div class="col-12 col-md-3 col-xl-2 py-md-3 bd-sidebar page-toc mb-3">
+          
+<div>
+<details style="padding:0.25rem 0;;padding-left: 0px;">
+            <summary class="bd-toc-link-wrapper">
+              <a href="#running-examples" class="bd-toc-link">Running Examples</a>
+              </summary>
+            <div>
+              <div class="bd-toc-link-wrapper" style="padding:0.25rem 0;">
+              <a
+                href="#unsequenced-side-effects"
+                class="bd-toc-link"
+                style="padding-left: 8px;;"
+              >
+                Unsequenced Side Effects
+              </a></div><div class="bd-toc-link-wrapper" style="padding:0.25rem 0;">
+              <a
+                href="#buffer-overflows-and-underflows"
+                class="bd-toc-link"
+                style="padding-left: 8px;;"
+              >
+                Buffer Overflows and Underflows
+              </a></div><div class="bd-toc-link-wrapper" style="padding:0.25rem 0;">
+              <a
+                href="#input-dependent-behavior"
+                class="bd-toc-link"
+                style="padding-left: 8px;;"
+              >
+                Input-Dependent Behavior
+              </a></div><div class="bd-toc-link-wrapper" style="padding:0.25rem 0;">
+              <a
+                href="#implementation-defined-behavior"
+                class="bd-toc-link"
+                style="padding-left: 8px;;"
+              >
+                Implementation-Defined Behavior
+              </a></div><div class="bd-toc-link-wrapper" style="padding:0.25rem 0;">
+              <a
+                href="#out-of-lifetime-access"
+                class="bd-toc-link"
+                style="padding-left: 8px;;"
+              >
+                Out of Lifetime Access
+              </a></div><div class="bd-toc-link-wrapper" style="padding:0.25rem 0;">
+              <a
+                href="#overflow-and-optimizations"
+                class="bd-toc-link"
+                style="padding-left: 8px;;"
+              >
+                Overflow and Optimizations
+              </a></div><div class="bd-toc-link-wrapper" style="padding:0.25rem 0;">
+              <a
+                href="#warnings%2C-or-lint-style-issues"
+                class="bd-toc-link"
+                style="padding-left: 8px;;"
+              >
+                Warnings, or Lint-Style Issues
+              </a></div><div class="bd-toc-link-wrapper" style="padding:0.25rem 0;">
+              <a
+                href="#and-many-more"
+                class="bd-toc-link"
+                style="padding-left: 8px;;"
+              >
+                And Many More
+              </a></div>
+            </div>
+          </details>
+        
+</div>
+
+        </div>
+        <div class="btn btn-rv-blue page-toc-toggle-btn"></div>
+        <!-- End Page ToC -->
+      </div>
+    </div>
+<!-- The footer is now controlled by the k-web-theme git submodule -->
+<footer id="rvsite-footer" class="app-footer text-md-left text-center">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-4 mb-md-0 mb-4">
+        <a href="https://runtimeverification.com/" target="_blank">
+          <picture>
+            <source
+              srcset="
+                https://runtimeverification.com/assets/img/rv-logo-dark.png
+              "
+              media="(prefers-color-scheme: dark)"
+            />
+            <img
+              class="logo-dark"
+              src="https://runtimeverification.com/assets/img/rv-logo.png"
+              alt="Runtime Verification logo"
+              style="height: 32px"
+            /> </picture
+        ></a>
+        <p class="mt-2 text-md-left copyright">
+          <a href="https://maps.app.goo.gl/8YhKozfmZtgzQBsH7" target="_blank"
+            >202 S Broadway Ave #31, Urbana, IL</a
+          >
+        </p>
+      </div>
+      <div class="col-md-4 text-md-center mb-md-0 mb-4"></div>
+      <div class="col-md-4 mb-md-0 mb-4 pl-0 text-md-right">
+        <p class="copyright">2024 © all rights reserved</p>
+        <span class="copyright"
+          ><a href="https://runtimeverification.com/privacy-policy"
+            >privacy policy</a
+          >
+          |
+          <a href="https://runtimeverification.com/terms-of-use"
+            >terms of use</a
+          ></span
+        >
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Typist/1.2/typist.min.js"></script>
+    <script src="../../assets/js/index.js"></script>
+  </body>
+</html>

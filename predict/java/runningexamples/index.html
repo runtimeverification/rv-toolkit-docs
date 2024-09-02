@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+<meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+/>
+<meta
+  name="description"
+  content="Design and implement your programming language and software analysis tools with mathematical rigor."
+/>
+<meta name="keywords" content="runtime, verification, rv, k" />
+<meta name="author" content="RV-Toolkit | Runtime Verification Inc" />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://runtimeverification.github.io/rv-toolkit-docs/predict/java/runningexamples/" />
+
+<!--favicon icon-->
+<link rel="icon" type="image/png" href="../../../assets/img/favicon.ico" />
+
+<title>RV-Toolkit | Runtime Verification Inc</title>
+
+<!-- <base href="/k/" /> -->
+
+<!--web fonts-->
+<link
+  href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,800"
+  rel="stylesheet"
+/>
+<link
+  href="https://fonts.googleapis.com/css?family=Lora:400i"
+  rel="stylesheet"
+/>
+
+<link
+  href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css"
+  rel="stylesheet"
+/>
+
+<link href="../../../assets/css/index.css" rel="stylesheet" />
+
+<!--[if (gt IE 9) |!(IE)]><!-->
+<!--<link rel="stylesheet" href="/assets/vendor/custom-nav/css/effects/fade-menu.css"/>-->
+<!-- <link rel="stylesheet" href="../../../assets/k/vl-nav/css/effects/slide-menu.css" /> -->
+<!--<![endif]-->
+
+  </head>
+
+  <body>
+<header
+  class="navbar navbar-expand navbar-dark flex-column flex-md-row bd-navbar"
+>
+  <a class="logo-link" href="../../../index.html"> RV-Toolkit </a>
+  <ul class="navbar-nav ml-md-auto">
+    <li class="nav-item">
+      <a
+        class="nav-link pl-2 pr-1 mx-1 py-3 my-n2"
+        href="https://github.com/runtimeverification/rv-toolkit-docs"
+        target="_blank"
+        rel="noopener"
+        aria-label="GitHub"
+      >
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  </ul>
+  <!--
+  <a
+    class="btn btn-rv-blue d-none d-lg-inline-block mb-3 mb-md-0 ml-md-3"
+    href="../../../downloads"
+    >Download</a
+  >
+  -->
+</header>
+
+
+    <div class="container-fluid">
+      <div class="row flex-xl-nowrap">
+<div class="col-12 col-md-3 col-xl-2 bd-sidebar mb-3">
+  <form
+    role="search"
+    class="bd-search d-flex align-items-center justify-content-between"
+  >
+    <input
+      type="search"
+      class="form-control"
+      placeholder="Search..."
+      aria-label="Search for..."
+      autocomplete="false"
+      id="search-box"
+    />
+    <button
+      class="btn bd-search-docs-toggle d-md-none p-0 ml-3 collapsed"
+      type="button"
+      aria-label="Toggle docs navigation"
+      style="font-size: 1.4rem"
+    >
+      <i class="fas fa-bars"></i>
+    </button>
+  </form>
+  <nav class="collapse bd-links" aria-label="Main navigation">
+    <div class="bd-toc-item">
+      <a class="bd-toc-link" href="../../../predict/java/">Welcome!</a>
+      <a class="bd-toc-link" href="../../../predict/java/quickstart/"
+        >Quickstart</a
+      >
+      <a class="bd-toc-link" href="../../../predict/java/runningexamples/"
+        >Running Examples</a
+      >
+      <a class="bd-toc-link" href="../../../predict/java/troubleshooting/"
+        >Trouble Shooting</a
+      >
+      <a
+        class="bd-toc-link"
+        href="https://runtimeverification.com/blog/category/rv-predict/"
+        target="_blank"
+        >RV-Predict Blog</a
+      >
+    </div>
+  </nav>
+</div>
+
+        <main
+          class="col-12 col-md-6 col-xl-8 py-md-3 pl-md-5 bd-content"
+          role="main"
+        >
+          <div class="introduction markdown-preview"><html><head></head><body><h1 id="running-examples">Running Examples</h1>
+<p>RV-Predict comes with a suite of small benchmark examples which can be found in <code>examples/examples.jar</code>, whose source code is in <code>examples/src</code>. Please consult <code>examples/README.md</code> for more details. We strongly encourage you to also check out our blog article <a href="https://runtimeverification.com/blog/detecting-popular-data-races-in-java-using-rv-predict" target="_blank" rel="noreferrer noopener">Detecting popular data races in Java using RV-Predict</a>, execute all those examples (they are included in <code>examples.jar</code>) and try to understand the data races occurring in each and how RV-Predict detects and reports them. Below we only discuss the example <code>account.Account</code>.</p>
+<h2 id="account.account">account.Account</h2>
+<p>For brevety, assume we are in the <code>examples</code> directory.</p>
+<h3 id="normal-run">Normal run</h3>
+<p>Below is the output (no race) shown during a normal run:</p>
+<p>Running command:</p>
+<pre><code>java -cp examples.jar account.Account
+</code></pre>
+<p>Expected output:</p>
+<pre><code>Bank system started
+loop: 2
+loop: 2
+sum: 256
+sum: -174
+sum: -33
+sum: 76
+..
+End of the week.
+Bank records = 125, accounts balance = 125.
+Records match.
+</code></pre>
+<h3 id="rv-predict-run">RV-Predict run</h3>
+<p>To invoke RV-Predict on the Account class, simply replace <code>java</code> by <code>rv-predict</code> on the command line:</p>
+<pre><code>rv-predict -cp examples.jar account.Account
+</code></pre>
+<p>To use RV-Predict's agent mode, the similar command would be:</p>
+<pre><code>java -javaagent:../rv-predict.jar -cp examples.jar account.Account
+</code></pre>
+<p>As previously, a complete execution output of the Account class is generated, most probably not exhibiting the data-race either. Nevertheless, this output is followed by the RV-Predict analysis of the observed execution which shows that under different thread scheduling multiple races could have been observed:</p>
+<pre><code>----------------Instrumented execution to record the trace-----------------
+[RV-Predict] Log directory: /tmp/rv-predict7274661192308018898
+[RV-Predict] Finished retransforming preloaded classes.
+Bank system started
+loop: 2
+loop: 2
+sum: 256
+sum: -174
+sum: 76
+sum: -33
+..
+End of the week.
+Bank records = 125, accounts balance = 125.
+Records match.
+Data race on field account.Account.Bank_Total: {{{
+    Concurrent write in thread T12 (locks held: {})
+ ----&gt;  at account.Account.Service(Account.java:98)
+        at account.BankAccount.Action(BankAccount.java:41)
+        at account.BankAccount.run(BankAccount.java:56)
+    T12 is created by T1
+        at account.Account.go(Account.java:46)
+
+    Concurrent read in thread T13 (locks held: {})
+ ----&gt;  at account.Account.Service(Account.java:98)
+        at account.BankAccount.Action(BankAccount.java:41)
+        at account.BankAccount.run(BankAccount.java:56)
+    T13 is created by T1
+        at account.Account.go(Account.java:46)
+}}}
+
+Data race on field account.Account.Bank_Total: {{{
+    Concurrent write in thread T12 (locks held: {})
+ ----&gt;  at account.Account.Service(Account.java:98)
+        at account.BankAccount.Action(BankAccount.java:41)
+        at account.BankAccount.run(BankAccount.java:56)
+    T12 is created by T1
+        at account.Account.go(Account.java:46)
+
+    Concurrent read in thread T1 (locks held: {})
+ ----&gt;  at account.Account.checkResult(Account.java:75)
+        at account.Account.go(Account.java:70)
+        at account.Account.main(Account.java:30)
+    T1 is the main thread
+}}}
+
+Data race on field account.BankAccount.Balance: {{{
+    Concurrent write in thread T12 (locks held: {})
+ ----&gt;  at account.Account.Service(Account.java:97)
+        at account.BankAccount.Action(BankAccount.java:41)
+        at account.BankAccount.run(BankAccount.java:56)
+    T12 is created by T1
+        at account.Account.go(Account.java:46)
+
+    Concurrent read in thread T1 (locks held: {})
+ ----&gt;  at account.Account.go(Account.java:67)
+        at account.Account.main(Account.java:30)
+    T1 is the main thread
+}}}
+
+Data race on field account.Account.Bank_Total: {{{
+    Concurrent write in thread T12 (locks held: {})
+ ----&gt;  at account.Account.Service(Account.java:98)
+        at account.BankAccount.Action(BankAccount.java:41)
+        at account.BankAccount.run(BankAccount.java:56)
+    T12 is created by T1
+        at account.Account.go(Account.java:46)
+
+    Concurrent read in thread T1 (locks held: {})
+ ----&gt;  at account.Account.checkResult(Account.java:76)
+        at account.Account.go(Account.java:70)
+        at account.Account.main(Account.java:30)
+    T1 is the main thread
+}}}
+</code></pre>
+<h2 id="interpreting-the-results">Interpreting the results</h2>
+<p>Upon invoking RV-Predict on a class or a jar file, one should expect a normal execution of the class/jar (albeit slower, as the execution is traced), followed by a list of races (if any) that were discovered during the execution.</p>
+<p>For the example above, the <code>Account</code> example is executed, and what we observe in the standard output stream is a normal interaction which exhibits no data race, also indicated by the fact that the records match at the end of the session.</p>
+<p>The analysis performed on the logged trace exhibits 4 data-races which could have occurred if the thread scheduling would have been different.</p>
+<p>Take for example the final data-race exhibited in the above example. RV-Predict shows a race on the <code>account.Account.Bank_Total</code> field and gives the stacktraces of the two memory accesses involved in the race. The first stacktrace describes a write on the field performed by thread <code>T12</code> (holding no locks) during the execution of the <code>account.Account.Service</code> method at line <code>98</code> in the <code>Account.java</code> file. Similarly, the second stacktrace describes a read on the same field performed by thread T1 holding no locks during the execution of method <code>account.Account.checkResult</code> at line <code>76</code> of the <code>Account.java</code> file. Full stacktraces are included for both accesses, including information about the creation of the threads.</p>
+<p>The stack trace is presented in the same format as in Java to ease integration with IDEs and stacktrace analysis tools. If there were locks acquired, the location where the locks were acquired would have appeared in the stack traces.</p>
+<p>Finally, if the race would be due to an array access, the text <code>field &lt;field_name&gt;</code> would be replaced by <code>an array access</code> in the race report.</p>
+<p>If no races are found, then the message <code>No races found.</code> is displayed. The races are logged in the log directory printed at the beginning of the report (<code>/tmp/rv-predict7274661192308018898</code>) in <code>result.txt</code>, and any errors or stacktraces are recorded in <code>debug.log</code>.</p>
+<h2 id="more-examples">More Examples</h2>
+<p>Check out more examples at <a href="https://runtimeverification.com/blog/detecting-popular-data-races-in-java-using-rv-predict" target="_blank" rel="noreferrer noopener">Detecting popular data races in Java using RV-Predict</a>.</p>
+</body></html></div>
+        </main>
+
+        <!-- Page ToC -->
+        <div class="col-12 col-md-3 col-xl-2 py-md-3 bd-sidebar page-toc mb-3">
+          
+<div>
+<details style="padding:0.25rem 0;;padding-left: 0px;">
+            <summary class="bd-toc-link-wrapper">
+              <a href="#running-examples" class="bd-toc-link">Running Examples</a>
+              </summary>
+            <div>
+              <details style="padding:0.25rem 0;;padding-left: 8px;">
+            <summary class="bd-toc-link-wrapper">
+              <a href="#account.account" class="bd-toc-link">account.Account</a>
+              </summary>
+            <div>
+              <div class="bd-toc-link-wrapper" style="padding:0.25rem 0;">
+              <a
+                href="#normal-run"
+                class="bd-toc-link"
+                style="padding-left: 16px;;"
+              >
+                Normal run
+              </a></div><div class="bd-toc-link-wrapper" style="padding:0.25rem 0;">
+              <a
+                href="#rv-predict-run"
+                class="bd-toc-link"
+                style="padding-left: 16px;;"
+              >
+                RV-Predict run
+              </a></div>
+            </div>
+          </details>
+        <div class="bd-toc-link-wrapper" style="padding:0.25rem 0;">
+              <a
+                href="#interpreting-the-results"
+                class="bd-toc-link"
+                style="padding-left: 8px;;"
+              >
+                Interpreting the results
+              </a></div><div class="bd-toc-link-wrapper" style="padding:0.25rem 0;">
+              <a
+                href="#more-examples"
+                class="bd-toc-link"
+                style="padding-left: 8px;;"
+              >
+                More Examples
+              </a></div>
+            </div>
+          </details>
+        
+</div>
+
+        </div>
+        <div class="btn btn-rv-blue page-toc-toggle-btn"></div>
+        <!-- End Page ToC -->
+      </div>
+    </div>
+<!-- The footer is now controlled by the k-web-theme git submodule -->
+<footer id="rvsite-footer" class="app-footer text-md-left text-center">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-4 mb-md-0 mb-4">
+        <a href="https://runtimeverification.com/" target="_blank">
+          <picture>
+            <source
+              srcset="
+                https://runtimeverification.com/assets/img/rv-logo-dark.png
+              "
+              media="(prefers-color-scheme: dark)"
+            />
+            <img
+              class="logo-dark"
+              src="https://runtimeverification.com/assets/img/rv-logo.png"
+              alt="Runtime Verification logo"
+              style="height: 32px"
+            /> </picture
+        ></a>
+        <p class="mt-2 text-md-left copyright">
+          <a href="https://maps.app.goo.gl/8YhKozfmZtgzQBsH7" target="_blank"
+            >202 S Broadway Ave #31, Urbana, IL</a
+          >
+        </p>
+      </div>
+      <div class="col-md-4 text-md-center mb-md-0 mb-4"></div>
+      <div class="col-md-4 mb-md-0 mb-4 pl-0 text-md-right">
+        <p class="copyright">2024 © all rights reserved</p>
+        <span class="copyright"
+          ><a href="https://runtimeverification.com/privacy-policy"
+            >privacy policy</a
+          >
+          |
+          <a href="https://runtimeverification.com/terms-of-use"
+            >terms of use</a
+          ></span
+        >
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Typist/1.2/typist.min.js"></script>
+    <script src="../../../assets/js/index.js"></script>
+  </body>
+</html>

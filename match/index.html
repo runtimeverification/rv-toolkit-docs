@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+<meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+/>
+<meta
+  name="description"
+  content="Design and implement your programming language and software analysis tools with mathematical rigor."
+/>
+<meta name="keywords" content="runtime, verification, rv, k" />
+<meta name="author" content="RV-Toolkit | Runtime Verification Inc" />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://runtimeverification.github.io/rv-toolkit-docs/match/" />
+
+<!--favicon icon-->
+<link rel="icon" type="image/png" href="../assets/img/favicon.ico" />
+
+<title>RV-Toolkit | Runtime Verification Inc</title>
+
+<!-- <base href="/k/" /> -->
+
+<!--web fonts-->
+<link
+  href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,800"
+  rel="stylesheet"
+/>
+<link
+  href="https://fonts.googleapis.com/css?family=Lora:400i"
+  rel="stylesheet"
+/>
+
+<link
+  href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css"
+  rel="stylesheet"
+/>
+
+<link href="../assets/css/index.css" rel="stylesheet" />
+
+<!--[if (gt IE 9) |!(IE)]><!-->
+<!--<link rel="stylesheet" href="/assets/vendor/custom-nav/css/effects/fade-menu.css"/>-->
+<!-- <link rel="stylesheet" href="../assets/k/vl-nav/css/effects/slide-menu.css" /> -->
+<!--<![endif]-->
+
+  </head>
+
+  <body>
+<header
+  class="navbar navbar-expand navbar-dark flex-column flex-md-row bd-navbar"
+>
+  <a class="logo-link" href="../index.html"> RV-Toolkit </a>
+  <ul class="navbar-nav ml-md-auto">
+    <li class="nav-item">
+      <a
+        class="nav-link pl-2 pr-1 mx-1 py-3 my-n2"
+        href="https://github.com/runtimeverification/rv-toolkit-docs"
+        target="_blank"
+        rel="noopener"
+        aria-label="GitHub"
+      >
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  </ul>
+  <!--
+  <a
+    class="btn btn-rv-blue d-none d-lg-inline-block mb-3 mb-md-0 ml-md-3"
+    href="../downloads"
+    >Download</a
+  >
+  -->
+</header>
+
+
+    <div class="container-fluid">
+      <div class="row flex-xl-nowrap">
+<div class="col-12 col-md-3 col-xl-2 bd-sidebar mb-3">
+    <form
+      role="search"
+      class="bd-search d-flex align-items-center justify-content-between"
+    >
+      <input
+        type="search"
+        class="form-control"
+        placeholder="Search..."
+        aria-label="Search for..."
+        autocomplete="false"
+        id="search-box"
+      />
+      <button
+        class="btn bd-search-docs-toggle d-md-none p-0 ml-3 collapsed"
+        type="button"
+        aria-label="Toggle docs navigation"
+        style="font-size: 1.4rem"
+      >
+        <i class="fas fa-bars"></i>
+      </button>
+    </form>
+    <nav class="collapse bd-links" aria-label="Main navigation">
+      <div class="bd-toc-item">
+        <a class="bd-toc-link" href="../match/">Welcome!</a>
+        <a class="bd-toc-link" href="../match/installing/">Installing</a>
+        <a class="bd-toc-link" href="../match/quickstart/">Quickstart</a>
+        <a class="bd-toc-link" href="../match/vagrant/"
+          >Running Vagrant VM</a
+        >
+        <a class="bd-toc-link" href="../match/runningexamples/"
+          >Running Examples</a
+        >
+        <a class="bd-toc-link" href="../match/benchmark/"
+          >Toyota ITC Benchmark</a
+        >
+        <a class="bd-toc-link" href="../match/eclipse/"
+          >Eclipse Integration</a
+        >
+        <a class="bd-toc-link" href="../match/reporting/"
+          >Creating Error Reports</a
+        >
+        <a class="bd-toc-link" href="../match/troubleshooting/"
+          >Problems running RV-Match?</a
+        >
+        <a
+          class="bd-toc-link"
+          href="https://runtimeverification.com/blog/category/rv-match/"
+          target="_blank"
+          >RV-Match Blog</a
+        >
+      </div>
+    </nav>
+  </div>
+  
+        <main
+          class="col-12 col-md-6 col-xl-8 py-md-3 pl-md-5 bd-content"
+          role="main"
+        >
+          <div class="introduction markdown-preview"><html><head></head><body><h1 id="welcome">Welcome</h1>
+<p>RV-Match is a program analysis environment based on the <a href="http://kframework.org/" target="_blank" rel="noreferrer noopener">K semantic framework</a>. The formal semantics of a target programming language is given as input, and RV-Match provides a series of formal analysis tools specialized for that language, such as a symbolic execution engine, a semantic debugger, a systematic checker for undesired behaviors (model-checker), and even a fully fledged deductive program verifier. RV-Match is currently instantiated and optimized to work with the publicly available <a href="https://github.com/kframework/c-semantics" target="_blank" rel="noreferrer noopener">C11 semantics</a> that rigorously formalizes the current <a href="http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=57853" target="_blank" rel="noreferrer noopener">ISO C11 Standard</a>, in the form of a tool called <code>kcc</code>, an ISO C11-compliant compiler for C. The novel technology underlying the <code>kcc</code> tool and the C11 semantics are best explained in the following papers:</p>
+<blockquote>
+<p>Dwight Guth, Chris Hathhorn, Manasvi Saxena, and Grigore Rosu. 2016. <a href="http://dx.doi.org/10.1007/978-3-319-41528-4_24" target="_blank" rel="noreferrer noopener">RV-Match: Practical Semantics-Based Program Analysis</a>. In Proceedings of the 28th International Conference on Computer Aided Verification (CAV ‘16). LNCS Volume 9779, 2016, pp 447-453. (Also available at <a href="http://fsl.cs.illinois.edu/index.php/RV-Match:_Practical_Semantics-Based_Program_Analysis" target="_blank" rel="noreferrer noopener">FSL@UIUC</a>)</p>
+<p>Chris Hathhorn, Chucky Ellison, and Grigore Rosu. 2015. <a href="http://dx.doi.org/10.1145/2813885.2737979" target="_blank" rel="noreferrer noopener">Defining the Undefinedness of C</a>. In Proceedings of the 36th ACM SIGPLAN Conference on Programming Language Design and Implementation (PLDI ‘15). ACM, New York, NY, USA, 336-345. (Also available at <a href="http://fsl.cs.illinois.edu/index.php/Defining_the_Undefinedness_of_C" target="_blank" rel="noreferrer noopener">FSL@UIUC</a>)</p>
+<p>Chucky Ellison and Grigore Rosu. 2012. <a href="http://dx.doi.org/10.1145/2103621.2103719" target="_blank" rel="noreferrer noopener">An Executable Formal Semantics of C with Applications</a>. In Proceedings of the 39th ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages (POPL ‘12). ACM New York, NY, USA, 533-544. (Also available at <a href="http://fsl.cs.illinois.edu/index.php/An_Executable_Formal_Semantics_of_C_with_Applications" target="_blank" rel="noreferrer noopener">FSL@UIUC</a>)</p>
+</blockquote>
+<p>Unlike modern optimizing compilers, whose goal is to make binaries that are as small and as fast as possible at the expense of compiling programs that may be semantically incorrect, <code>kcc</code> instead aims at mathematically rigorous dynamic checking of program compliance with the ISO C11 Standard. The ISO C11 Standard includes a number of categories of behavior that are subject to change on the whim of the compiler developer. A program compiled and executed using <code>kcc</code> will catch many of these errors, in the same style as Valgrind or UBSan, ASan, etc., but can also catch a number of other even more subtle errors that result in undefined, unspecified, or implementation-defined behavior.</p>
+<p>This is critical because many of these behaviors are not only unintended, but also subject to change if you switch to a new target platform, compiler, or compiler version or optimization. A program that seems to run perfectly in one environment can crash or behave incorrectly in another environment.</p>
+</body></html></div>
+        </main>
+
+        <!-- Page ToC -->
+        <div class="col-12 col-md-3 col-xl-2 py-md-3 bd-sidebar page-toc mb-3">
+          
+<div>
+<div class="bd-toc-link-wrapper" style="padding:0.25rem 0;">
+              <a
+                href="#welcome"
+                class="bd-toc-link"
+                style="padding-left: 0px;;"
+              >
+                Welcome
+              </a></div>
+</div>
+
+        </div>
+        <div class="btn btn-rv-blue page-toc-toggle-btn"></div>
+        <!-- End Page ToC -->
+      </div>
+    </div>
+<!-- The footer is now controlled by the k-web-theme git submodule -->
+<footer id="rvsite-footer" class="app-footer text-md-left text-center">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-4 mb-md-0 mb-4">
+        <a href="https://runtimeverification.com/" target="_blank">
+          <picture>
+            <source
+              srcset="
+                https://runtimeverification.com/assets/img/rv-logo-dark.png
+              "
+              media="(prefers-color-scheme: dark)"
+            />
+            <img
+              class="logo-dark"
+              src="https://runtimeverification.com/assets/img/rv-logo.png"
+              alt="Runtime Verification logo"
+              style="height: 32px"
+            /> </picture
+        ></a>
+        <p class="mt-2 text-md-left copyright">
+          <a href="https://maps.app.goo.gl/8YhKozfmZtgzQBsH7" target="_blank"
+            >202 S Broadway Ave #31, Urbana, IL</a
+          >
+        </p>
+      </div>
+      <div class="col-md-4 text-md-center mb-md-0 mb-4"></div>
+      <div class="col-md-4 mb-md-0 mb-4 pl-0 text-md-right">
+        <p class="copyright">2024 © all rights reserved</p>
+        <span class="copyright"
+          ><a href="https://runtimeverification.com/privacy-policy"
+            >privacy policy</a
+          >
+          |
+          <a href="https://runtimeverification.com/terms-of-use"
+            >terms of use</a
+          ></span
+        >
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Typist/1.2/typist.min.js"></script>
+    <script src="../assets/js/index.js"></script>
+  </body>
+</html>
